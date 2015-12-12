@@ -1,11 +1,14 @@
 package request
 
 import (
+	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+
+	"github.com/toomore/lazyflickrgo/jsonstruct"
 )
 
 type request struct {
@@ -38,6 +41,14 @@ func (r request) Get(Args map[string]string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	data, _ := ioutil.ReadAll(resp.Body)
-	log.Printf("%s", data)
+	jsonData, _ := ioutil.ReadAll(resp.Body)
+	log.Printf("%s", jsonData)
+
+	var data jsonstruct.PhotosSearch
+	json.Unmarshal(jsonData, &data)
+	log.Printf("%+v", data)
+	for i, vals := range data.Photos.Photo {
+		log.Println(i, vals)
+		//log.Printf("https://www.flickr.com/photos/%s/%s\n", vals.Owner, vals.ID)
+	}
 }
