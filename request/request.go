@@ -1,3 +1,4 @@
+// Package request support Get/Post request.
 package request
 
 import (
@@ -11,16 +12,18 @@ import (
 	"github.com/toomore/lazyflickrgo/jsonstruct"
 )
 
-type request struct {
+// Request struct
+type Request struct {
 	URL  *url.URL
 	args *url.Values
 }
 
-func NewRequest(URL string, Api_key string) *request {
+// NewRequest is to new a request.
+func NewRequest(URL string, APIKey string) *Request {
 	args := &url.Values{}
 
 	// Default args.
-	args.Set("api_key", Api_key)
+	args.Set("api_key", APIKey)
 	args.Set("format", "json")
 	args.Set("nojsoncallback", "1")
 
@@ -28,13 +31,14 @@ func NewRequest(URL string, Api_key string) *request {
 	if err != nil {
 		log.Fatalln(errors.New("URL format fail"))
 	}
-	return &request{
+	return &Request{
 		URL:  url,
 		args: args,
 	}
 }
 
-func (r request) Get(Args map[string]string) *http.Response {
+// Get is Get method request.
+func (r Request) Get(Args map[string]string) *http.Response {
 	for key, val := range Args {
 		r.args.Add(key, val)
 	}
@@ -49,19 +53,18 @@ func (r request) Get(Args map[string]string) *http.Response {
 
 }
 
-func (r request) PhotosSearch(Args map[string]string) jsonstruct.PhotosSearch {
+// PhotosSearch is "flickr.photos.search"
+//
+// https://www.flickr.com/services/api/flickr.photos.search.html
+func (r Request) PhotosSearch(Args map[string]string) jsonstruct.PhotosSearch {
 	Args["method"] = "flickr.photos.search"
 
 	resp := r.Get(Args)
 	jsonData, _ := ioutil.ReadAll(resp.Body)
-	//log.Printf("%s", jsonData)
 
 	var data jsonstruct.PhotosSearch
-	json.Unmarshal(jsonData, &data)
-	//log.Printf("%+v", data)
-	for i, vals := range data.Photos.Photo {
-		log.Println(i, vals)
-		//log.Printf("https://www.flickr.com/photos/%s/%s\n", vals.Owner, vals.ID)
+	if err := json.Unmarshal(jsonData, &data); err != nil {
+		log.Println(err)
 	}
 	return data
 }

@@ -19,5 +19,10 @@ func TestNewRequest(*testing.T) {
 	args["tag_mode"] = "all"
 	args["sort"] = "date-posted-desc"
 
-	t.PhotosSearch(args)
+	data := t.PhotosSearch(args)
+
+	for i, vals := range data.Photos.Photo {
+		log.Printf("%02d %+v\n", i, vals)
+		//log.Printf("https://www.flickr.com/photos/%s/%s\n", vals.Owner, vals.ID)
+	}
 }
