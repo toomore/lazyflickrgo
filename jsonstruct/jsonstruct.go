@@ -3,7 +3,6 @@ package jsonstruct
 
 import (
 	"net/url"
-	"os"
 
 	"github.com/toomore/lazyflickrgo/utils"
 )
@@ -76,9 +75,9 @@ type Content struct {
 }
 
 // GetTokenURL to output link.
-func (auth AuthGetFrob) GetTokenURL() string {
+func (auth AuthGetFrob) GetTokenURL(APIKey string, secretKey string) string {
 	args := make(map[string]string)
-	args["api_key"] = os.Getenv("FLICKRAPIKEY")
+	args["api_key"] = APIKey
 	args["perms"] = "write"
 	args["frob"] = auth.Frob.Content
 
@@ -86,7 +85,7 @@ func (auth AuthGetFrob) GetTokenURL() string {
 	for key, val := range args {
 		Args.Set(key, val)
 	}
-	Args.Set("api_sig", utils.Sign(args))
+	Args.Set("api_sig", utils.Sign(args, secretKey))
 
 	url, _ := url.Parse(utils.AUTHURL)
 	url.RawQuery = Args.Encode()

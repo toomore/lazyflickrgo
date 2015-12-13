@@ -4,7 +4,6 @@ package utils
 import (
 	"crypto/md5"
 	"fmt"
-	"os"
 	"sort"
 	"strings"
 )
@@ -17,7 +16,7 @@ const (
 )
 
 // Sign for API `api_sig`
-func Sign(args map[string]string) string {
+func Sign(args map[string]string, secretKey string) string {
 	keySortedList := make([]string, len(args))
 	var loop int64
 	for key := range args {
@@ -30,6 +29,6 @@ func Sign(args map[string]string) string {
 		hashList[2*i] = val
 		hashList[2*i+1] = args[val]
 	}
-	hashstring := fmt.Sprintf("%s%s", os.Getenv("FLICKRSECRET"), strings.Join(hashList, ""))
+	hashstring := fmt.Sprintf("%s%s", secretKey, strings.Join(hashList, ""))
 	return fmt.Sprintf("%x", md5.Sum([]byte(hashstring)))
 }

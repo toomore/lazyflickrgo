@@ -10,7 +10,7 @@ import (
 )
 
 func getFlickr() *Flickr {
-	t := NewFlickr(os.Getenv("FLICKRAPIKEY"))
+	t := NewFlickr(os.Getenv("FLICKRAPIKEY"), os.Getenv("FLICKRSECRET"))
 
 	log.Printf("%+v\n", t)
 
@@ -55,7 +55,7 @@ func TestFlickr_AuthGetFrob(*testing.T) {
 	t := getFlickr()
 	getFrob := t.AuthGetFrob()
 	log.Printf("%+v", getFrob)
-	log.Println(getFrob.GetTokenURL())
+	log.Println(getFrob.GetTokenURL(os.Getenv("FLICKRAPIKEY"), os.Getenv("FLICKRSECRET")))
 }
 
 func TestFlickr_GetToken(*testing.T) {
