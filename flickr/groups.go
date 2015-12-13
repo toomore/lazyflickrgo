@@ -27,3 +27,25 @@ func (f Flickr) GroupsPoolsAdd(GroupsID string, PhotosID string) jsonstruct.Comm
 	}
 	return result
 }
+
+// GroupsGetInfo for search group by id or path.
+func (f Flickr) GroupsGetInfo(GroupID string, PathAlias string) jsonstruct.GroupsGetInfo {
+	args := make(map[string]string)
+	args["method"] = "flickr.groups.getInfo"
+	if GroupID != "" {
+		args["group_id"] = GroupID
+	}
+
+	if PathAlias != "" {
+		args["group_path_alias"] = PathAlias
+	}
+	resp := f.HTTPGet(utils.APIURL, args)
+	jsonData, _ := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+
+	var result jsonstruct.GroupsGetInfo
+	if err := json.Unmarshal(jsonData, &result); err != nil {
+		log.Println(err)
+	}
+	return result
+}

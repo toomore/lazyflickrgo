@@ -6,6 +6,7 @@ Because of more photos need to share, but no time to do that. OK, write some cod
 Completed:
 - AuthGetFrob (`flickr.auth.getFrob`)
 - AuthGetToken (`flickr.auth.getToken`)
+- GroupsGetInfo (`flickr.groups.getInfo`)
 - GroupsPoolsAdd (`flickr.groups.pools.add`)
 - PhotosSearch (`flickr.photos.search`)
 - PhotosetsGetPhotos (`flickr.photosets.getPhotos`)

@@ -90,6 +90,29 @@ type PhotosetsGetPhotos struct {
 	Common
 }
 
+// Group struct
+type Group struct {
+	ID              string  `json:"id"`
+	PathAlias       string  `json:"path_alias"`
+	IconServer      string  `json:"iconserver"`
+	IconFarm        int     `json:"iconfarm"`
+	Name            Content `json:"name"`
+	Description     Content `json:"description"`
+	Rules           Content `json:"rules"`
+	Members         Content `json:"members"`
+	Poolcount       Content `json:"pool_count"`
+	Topiccount      Content `json:"topic_count"`
+	Privacy         Content `json:"privacy"`
+	Lang            string  `json:"lang"`
+	Ispoolmoderated int     `json:"ispoolmoderated"`
+}
+
+// GroupsGetInfo struct
+type GroupsGetInfo struct {
+	Group Group `json:"group"`
+	Common
+}
+
 // GetTokenURL to output link.
 func (auth AuthGetFrob) GetTokenURL(APIKey string, secretKey string) string {
 	args := make(map[string]string)
