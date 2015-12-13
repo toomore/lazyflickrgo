@@ -32,8 +32,8 @@ func NewFlickr(APIKey string) *Flickr {
 	}
 }
 
-// Get method request.
-func (f Flickr) HttpGet(URL string, Args map[string]string) *http.Response {
+// HTTPGet method request.
+func (f Flickr) HTTPGet(URL string, Args map[string]string) *http.Response {
 	for key, val := range f.args {
 		Args[key] = val
 	}
@@ -59,8 +59,8 @@ func (f Flickr) HttpGet(URL string, Args map[string]string) *http.Response {
 	return resp
 }
 
-// Post method request.
-func (f Flickr) HttpPost(urlpath string, Data map[string]string) *http.Response {
+// HTTPPost method request.
+func (f Flickr) HTTPPost(urlpath string, Data map[string]string) *http.Response {
 	for key, val := range f.args {
 		Data[key] = val
 	}
@@ -88,7 +88,7 @@ func (f Flickr) HttpPost(urlpath string, Data map[string]string) *http.Response 
 func (f Flickr) PhotosSearch(Args map[string]string) jsonstruct.PhotosSearch {
 	Args["method"] = "flickr.photos.search"
 
-	resp := f.HttpGet(utils.APIURL, Args)
+	resp := f.HTTPGet(utils.APIURL, Args)
 	jsonData, _ := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 
@@ -107,7 +107,7 @@ func (f Flickr) GroupsPoolsAdd(GroupsID string, PhotosID string) jsonstruct.Comm
 	data["photo_id"] = PhotosID
 	data["auth_token"] = os.Getenv("FLICKRUSERTOKEN")
 
-	resp := f.HttpPost(utils.APIURL, data)
+	resp := f.HTTPPost(utils.APIURL, data)
 	jsonData, _ := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 
@@ -121,7 +121,7 @@ func (f Flickr) GroupsPoolsAdd(GroupsID string, PhotosID string) jsonstruct.Comm
 // AuthGetFrob to get Frob link.
 func (f Flickr) AuthGetFrob() jsonstruct.AuthGetFrob {
 	Args := map[string]string{"method": "flickr.auth.getFrob"}
-	resp := f.HttpGet(utils.APIURL, Args)
+	resp := f.HTTPGet(utils.APIURL, Args)
 	jsonData, _ := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 
@@ -138,7 +138,7 @@ func (f Flickr) AuthGetToken(frob string) jsonstruct.AuthGetToken {
 	args["method"] = "flickr.auth.getToken"
 	args["frob"] = frob
 
-	resp := f.HttpGet(utils.APIURL, args)
+	resp := f.HTTPGet(utils.APIURL, args)
 	jsonData, _ := ioutil.ReadAll(resp.Body)
 	log.Printf("%s\n", jsonData)
 	defer resp.Body.Close()

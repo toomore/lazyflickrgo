@@ -45,7 +45,7 @@ func TestFlickr_Post(*testing.T) {
 	data["photo_id"] = os.Getenv("FLICKRPHOTOID")
 	data["auth_token"] = os.Getenv("FLICKRUSERTOKEN")
 
-	resp := t.HttpPost(utils.APIURL, data)
+	resp := t.HTTPPost(utils.APIURL, data)
 	body, err := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	log.Printf("%s, %s\n", body, err)
