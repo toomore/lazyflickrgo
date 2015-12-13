@@ -6,9 +6,11 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/toomore/lazyflickrgo/flickr"
+	"github.com/toomore/lazyflickrgo/jsonstruct"
 )
 
 var (
@@ -17,7 +19,7 @@ var (
 	groupID = flag.String("groupid", "", "Group number ID")
 	apikey  = flag.String("apikey", os.Getenv("FLICKRAPIKEY"), "Flickr API Key")
 	secret  = flag.String("secret", os.Getenv("FLICKRSECRET"), "Flickr secret")
-	shareN  = flag.Int("n", 6, "Per share num")
+	shareN  = flag.Int64("n", 6, "Per share num")
 )
 
 func main() {
@@ -27,6 +29,8 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(0)
 	}
+
+	var wg sync.WaitGroup
 
 	f := flickr.NewFlickr(*apikey, *secret)
 	f.AuthToken = os.Getenv("FLICKRUSERTOKEN")
@@ -40,9 +44,17 @@ func main() {
 	}
 
 	r := rand.New(rand.NewSource(time.Now().Unix()))
+	if num <= *shareN {
+		*shareN = num
+	}
+	wg.Add(int(*shareN))
 	for _, val := range r.Perm(int(num))[:*shareN] {
 		photo := albumdata.Photoset.Photos.Photo[val]
-		log.Println(val, photo.ID, photo)
-		log.Printf("%+v", f.GroupsPoolsAdd(*groupID, photo.ID))
+		go func(photo jsonstruct.Photo, groupID *string, val int) {
+			log.Println(val, photo.ID, photo)
+			log.Printf("%+v", f.GroupsPoolsAdd(*groupID, photo.ID))
+			wg.Done()
+		}(photo, groupID, val)
 	}
+	wg.Wait()
 }
