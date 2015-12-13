@@ -78,7 +78,7 @@ type Content struct {
 // GetTokenURL to output link.
 func (auth AuthGetFrob) GetTokenURL() string {
 	args := make(map[string]string)
-	args["api_key"] = os.Getenv("FLICKRAPI")
+	args["api_key"] = os.Getenv("FLICKRAPIKEY")
 	args["perms"] = "write"
 	args["frob"] = auth.Frob.Content
 

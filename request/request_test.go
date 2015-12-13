@@ -10,7 +10,7 @@ import (
 )
 
 func getRequest() *Request {
-	t := NewRequest(os.Getenv("FLICKRAPI"))
+	t := NewRequest(os.Getenv("FLICKRAPIKEY"))
 
 	log.Printf("%+v\n", t)
 
