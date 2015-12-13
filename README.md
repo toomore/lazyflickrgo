@@ -1,6 +1,8 @@
 LazyFlickrGo
 ============
 
+[![GoDoc](https://godoc.org/github.com/toomore/lazyflickrgo?status.svg)](https://godoc.org/github.com/toomore/lazyflickrgo)
+
 Because of more photos need to share, but no time to do that. OK, write some code for sharing photos.
 
 Completed:
