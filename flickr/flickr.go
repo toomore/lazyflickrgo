@@ -1,5 +1,5 @@
-// Package request support Get/Post request.
-package request
+// Package flickr for api.
+package flickr
 
 import (
 	"encoding/json"
@@ -13,13 +13,13 @@ import (
 	"github.com/toomore/lazyflickrgo/utils"
 )
 
-// Request struct
-type Request struct {
+// Flickr struct
+type Flickr struct {
 	args map[string]string
 }
 
-// NewRequest is to new a request.
-func NewRequest(APIKey string) *Request {
+// NewFlickr is to new a request.
+func NewFlickr(APIKey string) *Flickr {
 	args := make(map[string]string)
 
 	// Default args.
@@ -27,14 +27,14 @@ func NewRequest(APIKey string) *Request {
 	args["nojsoncallback"] = "1"
 	args["api_key"] = APIKey
 
-	return &Request{
+	return &Flickr{
 		args: args,
 	}
 }
 
 // Get method request.
-func (r Request) Get(URL string, Args map[string]string) *http.Response {
-	for key, val := range r.args {
+func (f Flickr) HttpGet(URL string, Args map[string]string) *http.Response {
+	for key, val := range f.args {
 		Args[key] = val
 	}
 
@@ -60,8 +60,8 @@ func (r Request) Get(URL string, Args map[string]string) *http.Response {
 }
 
 // Post method request.
-func (r Request) Post(urlpath string, Data map[string]string) *http.Response {
-	for key, val := range r.args {
+func (f Flickr) HttpPost(urlpath string, Data map[string]string) *http.Response {
+	for key, val := range f.args {
 		Data[key] = val
 	}
 
@@ -85,10 +85,10 @@ func (r Request) Post(urlpath string, Data map[string]string) *http.Response {
 // PhotosSearch search photos.
 //
 // https://www.flickr.com/services/api/flickr.photos.search.html
-func (r Request) PhotosSearch(Args map[string]string) jsonstruct.PhotosSearch {
+func (f Flickr) PhotosSearch(Args map[string]string) jsonstruct.PhotosSearch {
 	Args["method"] = "flickr.photos.search"
 
-	resp := r.Get(utils.APIURL, Args)
+	resp := f.HttpGet(utils.APIURL, Args)
 	jsonData, _ := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 
@@ -100,14 +100,14 @@ func (r Request) PhotosSearch(Args map[string]string) jsonstruct.PhotosSearch {
 }
 
 // GroupsPoolsAdd add photo to a groups.
-func (r Request) GroupsPoolsAdd(GroupsID string, PhotosID string) jsonstruct.Common {
+func (f Flickr) GroupsPoolsAdd(GroupsID string, PhotosID string) jsonstruct.Common {
 	data := make(map[string]string)
 	data["method"] = "flickr.groups.pools.add"
 	data["group_id"] = GroupsID
 	data["photo_id"] = PhotosID
 	data["auth_token"] = os.Getenv("FLICKRUSERTOKEN")
 
-	resp := r.Post(utils.APIURL, data)
+	resp := f.HttpPost(utils.APIURL, data)
 	jsonData, _ := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 
@@ -119,9 +119,9 @@ func (r Request) GroupsPoolsAdd(GroupsID string, PhotosID string) jsonstruct.Com
 }
 
 // AuthGetFrob to get Frob link.
-func (r Request) AuthGetFrob() jsonstruct.AuthGetFrob {
+func (f Flickr) AuthGetFrob() jsonstruct.AuthGetFrob {
 	Args := map[string]string{"method": "flickr.auth.getFrob"}
-	resp := r.Get(utils.APIURL, Args)
+	resp := f.HttpGet(utils.APIURL, Args)
 	jsonData, _ := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 
@@ -133,12 +133,12 @@ func (r Request) AuthGetFrob() jsonstruct.AuthGetFrob {
 }
 
 // AuthGetToken to get user auth token.
-func (r Request) AuthGetToken(frob string) jsonstruct.AuthGetToken {
+func (f Flickr) AuthGetToken(frob string) jsonstruct.AuthGetToken {
 	args := make(map[string]string)
 	args["method"] = "flickr.auth.getToken"
 	args["frob"] = frob
 
-	resp := r.Get(utils.APIURL, args)
+	resp := f.HttpGet(utils.APIURL, args)
 	jsonData, _ := ioutil.ReadAll(resp.Body)
 	log.Printf("%s\n", jsonData)
 	defer resp.Body.Close()
