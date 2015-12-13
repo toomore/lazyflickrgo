@@ -69,3 +69,10 @@ func TestFlickr_GroupsPoolsAdd(*testing.T) {
 		t.GroupsPoolsAdd(os.Getenv("FLICKRGROUPID"), "21111643239"),
 	)
 }
+
+func TestFlickr_PhotosetsGetPhotos(*testing.T) {
+	t := getFlickr()
+	log.Printf("%+v\n",
+		t.PhotosetsGetPhotos("72157657435287775", os.Getenv("FLICKRUSER")),
+	)
+}

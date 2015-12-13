@@ -74,6 +74,22 @@ type Content struct {
 	Content string `json:"_content"`
 }
 
+// Photoset struct
+type Photoset struct {
+	ID        string `json:"id"`
+	Primary   string `json:"primary"`
+	Owner     string `json:"owner"`
+	Ownername string `json:"ownername"`
+	Title     string `json:"title"`
+	Photos
+}
+
+// PhotosetsGetPhotos struct
+type PhotosetsGetPhotos struct {
+	Photoset Photoset `json:"photoset"`
+	Common
+}
+
 // GetTokenURL to output link.
 func (auth AuthGetFrob) GetTokenURL(APIKey string, secretKey string) string {
 	args := make(map[string]string)
