@@ -13,6 +13,7 @@ import (
 type Flickr struct {
 	args      map[string]string
 	secretKey string
+	AuthToken string
 }
 
 // NewFlickr is to new a request.

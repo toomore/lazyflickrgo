@@ -15,7 +15,7 @@ func (f Flickr) GroupsPoolsAdd(GroupsID string, PhotosID string) jsonstruct.Comm
 	data["method"] = "flickr.groups.pools.add"
 	data["group_id"] = GroupsID
 	data["photo_id"] = PhotosID
-	data["auth_token"] = f.secretKey
+	data["auth_token"] = f.AuthToken
 
 	resp := f.HTTPPost(utils.APIURL, data)
 	jsonData, _ := ioutil.ReadAll(resp.Body)
