@@ -12,13 +12,6 @@ import (
 	"github.com/toomore/lazyflickrgo/utils"
 )
 
-const (
-	// APIURL Flickr API
-	APIURL = "https://api.flickr.com/services/rest/"
-	// AUTHURL Flickr Auth URL
-	AUTHURL = "http://flickr.com/services/auth/"
-)
-
 // Request struct
 type Request struct {
 	args map[string]string
@@ -44,7 +37,7 @@ func (r Request) Get(URL string, Args map[string]string) *http.Response {
 		Args[key] = val
 	}
 
-	r.args["api_sig"] = utils.Sign(Args)
+	Args["api_sig"] = utils.Sign(Args)
 
 	query := url.Values{}
 	for key, val := range Args {
@@ -91,8 +84,9 @@ func (r Request) Post(urlpath string, Data map[string]string) *http.Response {
 func (r Request) PhotosSearch(Args map[string]string) jsonstruct.PhotosSearch {
 	Args["method"] = "flickr.photos.search"
 
-	resp := r.Get(APIURL, Args)
+	resp := r.Get(utils.APIURL, Args)
 	jsonData, _ := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
 
 	var data jsonstruct.PhotosSearch
 	if err := json.Unmarshal(jsonData, &data); err != nil {
@@ -101,5 +95,35 @@ func (r Request) PhotosSearch(Args map[string]string) jsonstruct.PhotosSearch {
 	return data
 }
 
-//func (r Request) AuthGetFrob() string {
-//	r.
+// AuthGetFrob to get Frob link.
+func (r Request) AuthGetFrob() jsonstruct.AuthGetFrob {
+	Args := map[string]string{"method": "flickr.auth.getFrob"}
+	resp := r.Get(utils.APIURL, Args)
+	jsonData, _ := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+
+	var data jsonstruct.AuthGetFrob
+	if err := json.Unmarshal(jsonData, &data); err != nil {
+		log.Println(err)
+	}
+	return data
+}
+
+// GetToken to get user auth token.
+func (r Request) GetToken(frob string) jsonstruct.AuthGetToken {
+	args := make(map[string]string)
+	args["method"] = "flickr.auth.getToken"
+	args["frob"] = frob
+
+	resp := r.Get(utils.APIURL, args)
+	jsonData, _ := ioutil.ReadAll(resp.Body)
+	log.Printf("%s\n", jsonData)
+	defer resp.Body.Close()
+
+	var data jsonstruct.AuthGetToken
+	if err := json.Unmarshal(jsonData, &data); err != nil {
+		log.Println(err)
+	}
+
+	return data
+}
