@@ -132,8 +132,8 @@ func (r Request) AuthGetFrob() jsonstruct.AuthGetFrob {
 	return data
 }
 
-// GetToken to get user auth token.
-func (r Request) GetToken(frob string) jsonstruct.AuthGetToken {
+// AuthGetToken to get user auth token.
+func (r Request) AuthGetToken(frob string) jsonstruct.AuthGetToken {
 	args := make(map[string]string)
 	args["method"] = "flickr.auth.getToken"
 	args["frob"] = frob

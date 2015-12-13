@@ -60,7 +60,7 @@ func TestRequest_AuthGetFrob(*testing.T) {
 
 func TestRequest_GetToken(*testing.T) {
 	t := getRequest()
-	log.Printf("%+v", t.GetToken("72157660016985653-8e43466dd79cd0b2-812975"))
+	log.Printf("%+v", t.AuthGetToken("72157660016985653-8e43466dd79cd0b2-812975"))
 }
 
 func TestRequest_GroupsPoolsAdd(*testing.T) {
