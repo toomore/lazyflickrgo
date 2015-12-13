@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 
 	"github.com/toomore/lazyflickrgo/jsonstruct"
 	"github.com/toomore/lazyflickrgo/utils"
@@ -63,7 +64,10 @@ func (r Request) Post(urlpath string, Data map[string]string) *http.Response {
 	for key, val := range r.args {
 		Data[key] = val
 	}
-	log.Printf("Post: %+v %s", r.args, urlpath)
+
+	Data["api_sig"] = utils.Sign(Data)
+
+	log.Printf("Post: %+v %s", Data, urlpath)
 
 	query := url.Values{}
 	for key, val := range Data {
@@ -78,7 +82,7 @@ func (r Request) Post(urlpath string, Data map[string]string) *http.Response {
 	return resp
 }
 
-// PhotosSearch is "flickr.photos.search"
+// PhotosSearch search photos.
 //
 // https://www.flickr.com/services/api/flickr.photos.search.html
 func (r Request) PhotosSearch(Args map[string]string) jsonstruct.PhotosSearch {
@@ -93,6 +97,25 @@ func (r Request) PhotosSearch(Args map[string]string) jsonstruct.PhotosSearch {
 		log.Println(err)
 	}
 	return data
+}
+
+// GroupsPoolsAdd add photo to a groups.
+func (r Request) GroupsPoolsAdd(GroupsID string, PhotosID string) jsonstruct.Common {
+	data := make(map[string]string)
+	data["method"] = "flickr.groups.pools.add"
+	data["group_id"] = GroupsID
+	data["photo_id"] = PhotosID
+	data["auth_token"] = os.Getenv("FLICKRUSERTOKEN")
+
+	resp := r.Post(utils.APIURL, data)
+	jsonData, _ := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+
+	var result jsonstruct.Common
+	if err := json.Unmarshal(jsonData, &result); err != nil {
+		log.Println(err)
+	}
+	return result
 }
 
 // AuthGetFrob to get Frob link.

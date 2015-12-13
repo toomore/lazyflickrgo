@@ -62,3 +62,10 @@ func TestRequest_GetToken(*testing.T) {
 	t := getRequest()
 	log.Printf("%+v", t.GetToken("72157660016985653-8e43466dd79cd0b2-812975"))
 }
+
+func TestRequest_GroupsPoolsAdd(*testing.T) {
+	t := getRequest()
+	log.Printf("%+v\n",
+		t.GroupsPoolsAdd(os.Getenv("FLICKRGROUPID"), "21111643239"),
+	)
+}
