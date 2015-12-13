@@ -7,10 +7,11 @@ import (
 	"strings"
 )
 
+// Sign for API `api_sig`
 func Sign(args map[string]string) string {
 	keySortedList := make([]string, len(args))
 	var loop int64
-	for key, _ := range args {
+	for key := range args {
 		keySortedList[loop] = key
 		loop++
 	}
