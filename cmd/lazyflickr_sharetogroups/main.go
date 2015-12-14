@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/toomore/lazyflickrgo/flickr"
 	"github.com/toomore/lazyflickrgo/jsonstruct"
 )
@@ -48,11 +49,19 @@ func main() {
 		*shareN = num
 	}
 	wg.Add(int(*shareN))
+	info := color.New(color.Bold, color.FgGreen).SprintfFunc()
+	warn := color.New(color.Bold, color.FgRed).SprintfFunc()
+
 	for _, val := range r.Perm(int(num))[:*shareN] {
 		photo := albumdata.Photoset.Photos.Photo[val]
+		log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
 		go func(photo jsonstruct.Photo, groupID *string, val int) {
-			log.Println(val, photo.ID, photo)
-			log.Printf("%+v", f.GroupsPoolsAdd(*groupID, photo.ID))
+			resp := f.GroupsPoolsAdd(*groupID, photo.ID)
+			if resp.Stat == "ok" {
+				log.Println(info("%s %s", photo.ID, photo.Title))
+			} else {
+				log.Println(warn("%s(%d) %s %s", resp.Message, resp.Code, photo.ID, photo.Title))
+			}
 			wg.Done()
 		}(photo, groupID, val)
 	}
