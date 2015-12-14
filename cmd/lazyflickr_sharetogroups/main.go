@@ -44,7 +44,7 @@ func main() {
 		num = total
 	}
 
-	r := rand.New(rand.NewSource(time.Now().Unix()))
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if num <= *shareN {
 		*shareN = num
 	}
