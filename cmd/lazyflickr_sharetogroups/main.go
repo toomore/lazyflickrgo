@@ -23,6 +23,19 @@ var (
 	shareN  = flag.Int64("n", 6, "Per share num")
 )
 
+func fromSets(f *flickr.Flickr) (int64, []jsonstruct.Photo) {
+	albumdata := f.PhotosetsGetPhotos(*albumID, *userID)
+	var num int64
+	total, _ := strconv.ParseInt(albumdata.Photoset.Photos.Total, 10, 32)
+	if albumdata.Photoset.Photos.Perpage <= total {
+		num = albumdata.Photoset.Photos.Perpage
+	} else {
+		num = total
+	}
+
+	return num, albumdata.Photoset.Photos.Photo
+}
+
 func main() {
 	flag.Parse()
 
@@ -35,14 +48,7 @@ func main() {
 
 	f := flickr.NewFlickr(*apikey, *secret)
 	f.AuthToken = os.Getenv("FLICKRUSERTOKEN")
-	albumdata := f.PhotosetsGetPhotos(*albumID, *userID)
-	var num int64
-	total, _ := strconv.ParseInt(albumdata.Photoset.Photos.Total, 10, 32)
-	if albumdata.Photoset.Photos.Perpage <= total {
-		num = albumdata.Photoset.Photos.Perpage
-	} else {
-		num = total
-	}
+	num, Photos := fromSets(f)
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if num <= *shareN {
@@ -53,7 +59,7 @@ func main() {
 	warn := color.New(color.Bold, color.FgRed).SprintfFunc()
 
 	for _, val := range r.Perm(int(num))[:*shareN] {
-		photo := albumdata.Photoset.Photos.Photo[val]
+		photo := Photos[val]
 		log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
 		go func(photo jsonstruct.Photo, groupID *string, val int) {
 			resp := f.GroupsPoolsAdd(*groupID, photo.ID)
