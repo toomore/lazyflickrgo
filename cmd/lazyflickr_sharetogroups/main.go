@@ -21,6 +21,7 @@ var (
 	apikey  = flag.String("apikey", os.Getenv("FLICKRAPIKEY"), "Flickr API Key")
 	secret  = flag.String("secret", os.Getenv("FLICKRSECRET"), "Flickr secret")
 	shareN  = flag.Int64("n", 6, "Per share num")
+	tags    = flag.String("tags", "", "Search tags, ',' for split more")
 )
 
 func fromSets(f *flickr.Flickr) (int64, []jsonstruct.Photo) {
@@ -36,6 +37,24 @@ func fromSets(f *flickr.Flickr) (int64, []jsonstruct.Photo) {
 	return num, albumdata.Photoset.Photos.Photo
 }
 
+func fromSearch(f *flickr.Flickr) (int64, []jsonstruct.Photo) {
+	args := make(map[string]string)
+	args["tags"] = *tags
+	args["tag_mode"] = "all"
+	args["sort"] = "date-posted-desc"
+	args["per_page"] = "500"
+	args["user_id"] = *userID
+	searchResult := f.PhotosSearch(args)
+	total, _ := strconv.ParseInt(searchResult.Photos.Total, 10, 32)
+	var num int64
+	if total < 500 {
+		num = total
+	} else {
+		num = 500
+	}
+	return num, searchResult.Photos.Photo
+}
+
 func main() {
 	flag.Parse()
 
@@ -44,16 +63,27 @@ func main() {
 		os.Exit(0)
 	}
 
-	var wg sync.WaitGroup
+	var (
+		wg     sync.WaitGroup
+		num    int64
+		Photos []jsonstruct.Photo
+		f      *flickr.Flickr
+	)
 
-	f := flickr.NewFlickr(*apikey, *secret)
+	f = flickr.NewFlickr(*apikey, *secret)
 	f.AuthToken = os.Getenv("FLICKRUSERTOKEN")
-	num, Photos := fromSets(f)
+
+	if *tags == "" {
+		num, Photos = fromSets(f)
+	} else {
+		num, Photos = fromSearch(f)
+	}
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if num <= *shareN {
 		*shareN = num
 	}
+
 	wg.Add(int(*shareN))
 	info := color.New(color.Bold, color.FgGreen).SprintfFunc()
 	warn := color.New(color.Bold, color.FgRed).SprintfFunc()
