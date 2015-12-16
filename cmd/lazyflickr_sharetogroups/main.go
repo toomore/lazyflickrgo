@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -20,35 +21,35 @@ var (
 	groupID = flag.String("groupid", "", "Group number ID")
 	apikey  = flag.String("apikey", os.Getenv("FLICKRAPIKEY"), "Flickr API Key")
 	secret  = flag.String("secret", os.Getenv("FLICKRSECRET"), "Flickr secret")
-	shareN  = flag.Int64("n", 6, "Per share num")
+	shareN  = flag.Int("n", 6, "Per share num")
 	tags    = flag.String("tags", "", "Search tags, ',' for split more")
 )
 
-func fromSets(f *flickr.Flickr) (int64, []jsonstruct.Photo) {
-	albumdata := f.PhotosetsGetPhotos(*albumID, *userID)
-	var num int64
-	total, _ := strconv.ParseInt(albumdata.Photoset.Photos.Total, 10, 32)
-	if albumdata.Photoset.Photos.Perpage <= total {
-		num = albumdata.Photoset.Photos.Perpage
-	} else {
-		num = total
+func fromSets(f *flickr.Flickr) (int, []jsonstruct.Photo) {
+	var result []jsonstruct.Photo
+	albums := strings.Split(*albumID, ",")
+	for i := range albums {
+		albumdata := f.PhotosetsGetPhotos(albums[i], *userID)
+		result = append(result, albumdata.Photoset.Photos.Photo...)
 	}
 
-	return num, albumdata.Photoset.Photos.Photo
+	return len(result), result
 }
 
-func fromSearch(f *flickr.Flickr) (int64, []jsonstruct.Photo) {
+func fromSearch(f *flickr.Flickr) (int, []jsonstruct.Photo) {
 	args := make(map[string]string)
 	args["tags"] = *tags
 	args["tag_mode"] = "all"
 	args["sort"] = "date-posted-desc"
 	args["per_page"] = "500"
 	args["user_id"] = *userID
+
 	searchResult := f.PhotosSearch(args)
+
 	total, _ := strconv.ParseInt(searchResult.Photos.Total, 10, 32)
-	var num int64
+	var num int
 	if total < 500 {
-		num = total
+		num = int(total)
 	} else {
 		num = 500
 	}
@@ -65,7 +66,7 @@ func main() {
 
 	var (
 		wg     sync.WaitGroup
-		num    int64
+		num    int
 		Photos []jsonstruct.Photo
 		f      *flickr.Flickr
 	)
@@ -84,11 +85,11 @@ func main() {
 		*shareN = num
 	}
 
-	wg.Add(int(*shareN))
+	wg.Add(*shareN)
 	info := color.New(color.Bold, color.FgGreen).SprintfFunc()
 	warn := color.New(color.Bold, color.FgRed).SprintfFunc()
 
-	for _, val := range r.Perm(int(num))[:*shareN] {
+	for _, val := range r.Perm(num)[:*shareN] {
 		photo := Photos[val]
 		log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
 		go func(photo jsonstruct.Photo, groupID *string, val int) {
@@ -102,4 +103,5 @@ func main() {
 		}(photo, groupID, val)
 	}
 	wg.Wait()
+	log.Printf("%d/%d photos share to: %s\n", *shareN, num, *groupID)
 }
