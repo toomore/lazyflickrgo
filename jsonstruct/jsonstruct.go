@@ -84,10 +84,39 @@ type Photoset struct {
 	Photos
 }
 
+// PhotosetInfo struct
+type PhotosetInfo struct {
+	ID               string  `json:"id"`
+	Primary          string  `json:"primary"`
+	Owner            string  `json:"owner"`
+	Username         string  `json:"username"`
+	Title            Content `json:"title"`
+	Description      Content `json:"description"`
+	Secret           string  `json:"secret"`
+	Server           string  `json:"server"`
+	Farm             int     `json:"farm"`
+	Photos           int     `json:"photos"`
+	CountViews       string  `json:"count_views"`
+	CountComment     string  `json:"count_comments"`
+	CountPhotos      string  `json:"count_photos"`
+	CountVideos      int     `json:"count_videos"`
+	CanComment       int     `json:"can_comment"`
+	DateCreate       string  `json:"date_create"`
+	DateUpdate       string  `json:"date_update"`
+	CoverPhotoServer string  `json:"coverphoto_server"`
+	CoverPhotoFarm   int     `json:"coverphoto_farm"`
+}
+
 // PhotosetsGetPhotos struct
 type PhotosetsGetPhotos struct {
 	Photoset Photoset `json:"photoset"`
 	Common
+}
+
+// PhotosetsGetInfo struct
+type PhotosetsGetInfo struct {
+	Photoset PhotosetInfo `json:"photoset"`
+	//Common
 }
 
 // Group struct

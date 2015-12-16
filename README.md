@@ -11,6 +11,7 @@ Completed:
 - GroupsGetInfo (`flickr.groups.getInfo`)
 - GroupsPoolsAdd (`flickr.groups.pools.add`)
 - PhotosSearch (`flickr.photos.search`)
+- PhotosetsGetInfo (`flickr.photosets.getInfo`)
 - PhotosetsGetPhotos (`flickr.photosets.getPhotos`)
 
 Environment vars *(some vars just for testing)*:

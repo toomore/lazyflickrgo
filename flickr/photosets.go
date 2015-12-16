@@ -26,3 +26,21 @@ func (f Flickr) PhotosetsGetPhotos(photosetID string, userID string) jsonstruct.
 	}
 	return data
 }
+
+// PhotosetsGetInfo get album / set info.
+func (f Flickr) PhotosetsGetInfo(photosetID string, userID string) jsonstruct.PhotosetsGetInfo {
+	args := make(map[string]string)
+	args["method"] = "flickr.photosets.getInfo"
+	args["photoset_id"] = photosetID
+	args["user_id"] = userID
+
+	resp := f.HTTPGet(utils.APIURL, args)
+	jsonData, _ := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+
+	var data jsonstruct.PhotosetsGetInfo
+	if err := json.Unmarshal(jsonData, &data); err != nil {
+		log.Println(err)
+	}
+	return data
+}

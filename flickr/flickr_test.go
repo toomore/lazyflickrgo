@@ -83,3 +83,10 @@ func TestFlickr_GroupsGetInfo(*testing.T) {
 		t.GroupsGetInfo("", "japan_directory_nihon"),
 	)
 }
+
+func TestFlickr_PhotosetsGetInfo(*testing.T) {
+	t := getFlickr()
+	log.Printf("%+v\n",
+		t.PhotosetsGetInfo("72157657435287775", os.Getenv("FLICKRUSER")),
+	)
+}
