@@ -23,6 +23,10 @@ var (
 	secret  = flag.String("secret", os.Getenv("FLICKRSECRET"), "Flickr secret")
 	shareN  = flag.Int("n", 6, "Per share num")
 	tags    = flag.String("tags", "", "Search tags, ',' for split more")
+	info    = color.New(color.Bold, color.FgGreen).SprintfFunc()
+	warn    = color.New(color.Bold, color.FgRed).SprintfFunc()
+	wg      sync.WaitGroup
+	photos  []jsonstruct.Photo
 )
 
 func fromSets(f *flickr.Flickr) (int, []jsonstruct.Photo) {
@@ -65,19 +69,17 @@ func main() {
 	}
 
 	var (
-		wg     sync.WaitGroup
-		num    int
-		Photos []jsonstruct.Photo
-		f      *flickr.Flickr
+		num int
+		f   *flickr.Flickr
 	)
 
 	f = flickr.NewFlickr(*apikey, *secret)
 	f.AuthToken = os.Getenv("FLICKRUSERTOKEN")
 
 	if *tags == "" {
-		num, Photos = fromSets(f)
+		num, photos = fromSets(f)
 	} else {
-		num, Photos = fromSearch(f)
+		num, photos = fromSearch(f)
 	}
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -86,11 +88,9 @@ func main() {
 	}
 
 	wg.Add(*shareN)
-	info := color.New(color.Bold, color.FgGreen).SprintfFunc()
-	warn := color.New(color.Bold, color.FgRed).SprintfFunc()
 
 	for _, val := range r.Perm(num)[:*shareN] {
-		photo := Photos[val]
+		photo := photos[val]
 		log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
 		go func(photo jsonstruct.Photo, groupID *string, val int) {
 			resp := f.GroupsPoolsAdd(*groupID, photo.ID)
