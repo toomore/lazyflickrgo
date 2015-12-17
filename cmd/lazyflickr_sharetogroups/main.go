@@ -75,26 +75,28 @@ func main() {
 	}
 
 	num = len(photos)
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if num <= *shareN {
 		*shareN = num
 	}
 
-	wg.Add(*shareN)
+	for _, groupid := range strings.Split(*groupID, ",") {
+		wg.Add(*shareN)
 
-	for _, val := range r.Perm(num)[:*shareN] {
-		photo := photos[val]
-		log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
-		go func(photo jsonstruct.Photo, groupID *string, val int) {
-			runtime.Gosched()
-			resp := f.GroupsPoolsAdd(*groupID, photo.ID)
-			if resp.Stat == "ok" {
-				log.Println(info("%s %s", photo.ID, photo.Title))
-			} else {
-				log.Println(warn("%s(%d) %s %s", resp.Message, resp.Code, photo.ID, photo.Title))
-			}
-			wg.Done()
-		}(photo, groupID, val)
+		startInt := rand.New(rand.NewSource(time.Now().UnixNano())).Int() % (num - *shareN)
+		for _, val := range rand.New(rand.NewSource(time.Now().UnixNano())).Perm(num)[startInt : startInt+*shareN] {
+			photo := photos[val]
+			log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
+			go func(photo jsonstruct.Photo, groupid string, val int) {
+				runtime.Gosched()
+				resp := f.GroupsPoolsAdd(groupid, photo.ID)
+				if resp.Stat == "ok" {
+					log.Println(info("[%s] %s %s", groupid, photo.ID, photo.Title))
+				} else {
+					log.Println(warn("[%s] %s(%d) %s %s", groupid, resp.Message, resp.Code, photo.ID, photo.Title))
+				}
+				wg.Done()
+			}(photo, groupid, val)
+		}
 	}
 	wg.Wait()
 	log.Printf("%d/%d photos share to: %s\n", *shareN, num, *groupID)
