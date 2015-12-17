@@ -5,7 +5,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
-	"strconv"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -29,18 +29,17 @@ var (
 	photos  []jsonstruct.Photo
 )
 
-func fromSets(f *flickr.Flickr) (int, []jsonstruct.Photo) {
+func fromSets(f *flickr.Flickr) []jsonstruct.Photo {
 	var result []jsonstruct.Photo
-	albums := strings.Split(*albumID, ",")
-	for i := range albums {
-		albumdata := f.PhotosetsGetPhotos(albums[i], *userID)
+	for _, albumid := range strings.Split(*albumID, ",") {
+		albumdata := f.PhotosetsGetPhotos(albumid, *userID)
 		result = append(result, albumdata.Photoset.Photos.Photo...)
 	}
 
-	return len(result), result
+	return result
 }
 
-func fromSearch(f *flickr.Flickr) (int, []jsonstruct.Photo) {
+func fromSearch(f *flickr.Flickr) []jsonstruct.Photo {
 	args := make(map[string]string)
 	args["tags"] = *tags
 	args["tag_mode"] = "all"
@@ -50,14 +49,7 @@ func fromSearch(f *flickr.Flickr) (int, []jsonstruct.Photo) {
 
 	searchResult := f.PhotosSearch(args)
 
-	total, _ := strconv.ParseInt(searchResult.Photos.Total, 10, 32)
-	var num int
-	if total < 500 {
-		num = int(total)
-	} else {
-		num = 500
-	}
-	return num, searchResult.Photos.Photo
+	return searchResult.Photos.Photo
 }
 
 func main() {
@@ -77,11 +69,12 @@ func main() {
 	f.AuthToken = os.Getenv("FLICKRUSERTOKEN")
 
 	if *tags == "" {
-		num, photos = fromSets(f)
+		photos = fromSets(f)
 	} else {
-		num, photos = fromSearch(f)
+		photos = fromSearch(f)
 	}
 
+	num = len(photos)
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if num <= *shareN {
 		*shareN = num
@@ -93,6 +86,7 @@ func main() {
 		photo := photos[val]
 		log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
 		go func(photo jsonstruct.Photo, groupID *string, val int) {
+			runtime.Gosched()
 			resp := f.GroupsPoolsAdd(*groupID, photo.ID)
 			if resp.Stat == "ok" {
 				log.Println(info("%s %s", photo.ID, photo.Title))
