@@ -14,6 +14,40 @@ type Common struct {
 	Message string `json:"message"`
 }
 
+// Tags struct
+type Tags struct {
+	Tag []tag `json:"tag"`
+}
+
+type tag struct {
+	Raw string `json:"raw"`
+}
+
+// URL struct
+type URL struct {
+	URL []urlstr `json:"url"`
+}
+
+type urlstr struct {
+	Type string `json:"type"`
+	Content
+}
+
+// PhotosGetInfo in flickr.photos.getInfo
+type PhotosGetInfo struct {
+	Photo struct {
+		ID          string  `json:"id"`
+		Secret      string  `json:"secret"`
+		Server      string  `json:"server"`
+		Farm        int64   `json:"farm"`
+		Title       Content `json:"title"`
+		Description Content `json:"description"`
+		Tags        Tags    `json:"tags"`
+		Urls        URL     `json:"urls"`
+	} `json:"photo"`
+	Common
+}
+
 // Photo in flickr.photos.search
 type Photo struct {
 	ID       string `json:"id"`

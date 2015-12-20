@@ -90,3 +90,10 @@ func TestFlickr_PhotosetsGetInfo(*testing.T) {
 		t.PhotosetsGetInfo("72157657435287775", os.Getenv("FLICKRUSER")),
 	)
 }
+
+func TestFlickr_PhotosGetInfo(*testing.T) {
+	t := getFlickr()
+	log.Printf("%+v\n",
+		t.PhotosGetInfo("23544438000"),
+	)
+}
