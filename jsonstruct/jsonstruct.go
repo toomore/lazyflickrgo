@@ -29,8 +29,8 @@ type URL struct {
 }
 
 type urlstr struct {
-	Type string `json:"type"`
-	Content
+	Type    string `json:"type"`
+	Content string `json:"_content"`
 }
 
 // PhotosGetInfo in flickr.photos.getInfo
@@ -38,6 +38,8 @@ type PhotosGetInfo struct {
 	Photo struct {
 		ID          string  `json:"id"`
 		Secret      string  `json:"secret"`
+		Orgsecret   string  `json:"originalsecret"`
+		Orgformat   string  `json:"originalformat"`
 		Server      string  `json:"server"`
 		Farm        int64   `json:"farm"`
 		Title       Content `json:"title"`
