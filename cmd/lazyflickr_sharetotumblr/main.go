@@ -21,6 +21,7 @@ const imageFormat = "https://farm%d.staticflickr.com/%s/%s_%s_o.%s"
 var (
 	apikey = flag.String("apikey", os.Getenv("FLICKRAPIKEY"), "Flickr API Key")
 	secret = flag.String("secret", os.Getenv("FLICKRSECRET"), "Flickr secret")
+	tags   = flag.String("tags", "", "Extend more tags, ',' for split")
 	info   = color.New(color.Bold, color.FgGreen).SprintfFunc()
 	warn   = color.New(color.Bold, color.FgRed).SprintfFunc()
 	wg     sync.WaitGroup
@@ -49,27 +50,25 @@ func main() {
 	wg.Wait()
 
 	for _, photo := range photolist {
-		photoURL := fmt.Sprintf(imageFormat,
+		args := make(map[string]string)
+		args["source"] = fmt.Sprintf(imageFormat,
 			photo.Photo.Farm,
 			photo.Photo.Server,
 			photo.Photo.ID,
 			photo.Photo.Orgsecret,
 			photo.Photo.Orgformat)
 
-		tagslist := make([]string, len(photo.Photo.Tags.Tag))
+		var extendtags int
+		if *tags != "" {
+			extendtags = 1
+		}
+		tagslist := make([]string, len(photo.Photo.Tags.Tag)+extendtags)
 		for i, val := range photo.Photo.Tags.Tag {
 			tagslist[i] = val.Raw
 		}
-		//tags := strings.Join(tagslist, ",")
-
-		//log.Printf("%+v\n", photo)
-		//log.Println(photoURL)
-		//log.Println(tags)
-		//log.Println(strings.Replace(photo.Photo.Description.Content, "\n", "<br>", -1))
-		//log.Println(photo.Photo.Urls.URL[0].Content)
-
-		args := make(map[string]string)
-		args["source"] = photoURL
+		if *tags != "" {
+			tagslist[len(photo.Photo.Tags.Tag)] = *tags
+		}
 		args["tags"] = strings.Join(tagslist, ",")
 		args["caption"] = fmt.Sprintf("<h2>%s</h2><p>%s</p>",
 			photo.Photo.Title.Content,
@@ -81,7 +80,8 @@ func main() {
 		if resp.StatusCode == 201 {
 			log.Println(info("[%s] %s", photo.Photo.ID, photo.Photo.Title.Content))
 		} else {
-			log.Println(warn("[Error:%d] [%s] %s", resp.StatusCode, photo.Photo.ID, photo.Photo.Title.Content))
+			log.Println(warn("[Error:%d] [%s] %s",
+				resp.StatusCode, photo.Photo.ID, photo.Photo.Title.Content))
 		}
 	}
 }

@@ -88,13 +88,13 @@ func main() {
 			log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
 			go func(photo jsonstruct.Photo, groupid string, val int) {
 				runtime.Gosched()
+				defer wg.Done()
 				resp := f.GroupsPoolsAdd(groupid, photo.ID)
 				if resp.Stat == "ok" {
 					log.Println(info("[%s] %s %s", groupid, photo.ID, photo.Title))
 				} else {
 					log.Println(warn("[%s] %s(%d) %s %s", groupid, resp.Message, resp.Code, photo.ID, photo.Title))
 				}
-				wg.Done()
 			}(photo, groupid, val)
 		}
 	}
