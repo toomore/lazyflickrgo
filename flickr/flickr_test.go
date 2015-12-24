@@ -72,9 +72,19 @@ func TestFlickr_GroupsPoolsAdd(*testing.T) {
 
 func TestFlickr_PhotosetsGetPhotos(*testing.T) {
 	t := getFlickr()
-	log.Printf("%+v\n",
-		t.PhotosetsGetPhotos("72157657435287775", os.Getenv("FLICKRUSER")),
-	)
+	data := t.PhotosetsGetPhotos("72157656102091084", os.Getenv("FLICKRUSER"), 1)
+	log.Printf("%+v\n", data)
+	log.Println(len(data.Photoset.Photo))
+}
+
+func TestFlickr_PhotosetsGetPhotosAll(*testing.T) {
+	t := getFlickr()
+	data := t.PhotosetsGetPhotosAll("72157656102091084", os.Getenv("FLICKRUSER"))
+	log.Printf("%+v\n", data)
+	for _, val := range data {
+		log.Println(val.Photoset.Photos.Page)
+		log.Println(len(val.Photoset.Photos.Photo))
+	}
 }
 
 func TestFlickr_GroupsGetInfo(*testing.T) {
@@ -87,7 +97,7 @@ func TestFlickr_GroupsGetInfo(*testing.T) {
 func TestFlickr_PhotosetsGetInfo(*testing.T) {
 	t := getFlickr()
 	log.Printf("%+v\n",
-		t.PhotosetsGetInfo("72157657435287775", os.Getenv("FLICKRUSER")),
+		t.PhotosetsGetInfo("72157656102091084", os.Getenv("FLICKRUSER")),
 	)
 }
 

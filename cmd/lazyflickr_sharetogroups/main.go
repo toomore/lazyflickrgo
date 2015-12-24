@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	userID  = flag.String("userid", "", "User number ID")
+	userID  = flag.String("userid", os.Getenv("FLICKRUSER"), "User number ID")
 	albumID = flag.String("albumid", "", "Album/Set number ID")
 	groupID = flag.String("groupid", "", "Group number ID")
 	apikey  = flag.String("apikey", os.Getenv("FLICKRAPIKEY"), "Flickr API Key")
@@ -32,8 +32,9 @@ var (
 func fromSets(f *flickr.Flickr) []jsonstruct.Photo {
 	var result []jsonstruct.Photo
 	for _, albumid := range strings.Split(*albumID, ",") {
-		albumdata := f.PhotosetsGetPhotos(albumid, *userID)
-		result = append(result, albumdata.Photoset.Photos.Photo...)
+		for _, albumdata := range f.PhotosetsGetPhotosAll(albumid, *userID) {
+			result = append(result, albumdata.Photoset.Photos.Photo...)
+		}
 	}
 
 	return result

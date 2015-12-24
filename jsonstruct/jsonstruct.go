@@ -65,7 +65,7 @@ type Photo struct {
 
 // Photos in flickr.photos.search
 type Photos struct {
-	Page    int64   `json:"page"`
+	Page    string  `json:"page"`
 	Pages   int64   `json:"pages"`
 	Perpage int64   `json:"perpage"`
 	Total   string  `json:"total"`

@@ -14,6 +14,7 @@ Completed:
 - PhotosSearch (`flickr.photos.search`)
 - PhotosetsGetInfo (`flickr.photosets.getInfo`)
 - PhotosetsGetPhotos (`flickr.photosets.getPhotos`)
+  - PhotosetsGetPhotosAll *(Get all pages data)*
 
 Environment vars *(some vars just for testing)*:
 - `FLICKRAPIKEY` *(Get from [Apps.Create](https://www.flickr.com/services/apps/create/))*
