@@ -74,7 +74,13 @@ type Photos struct {
 
 // PhotosSearch in flickr.photos.search
 type PhotosSearch struct {
-	Photos Photos `json:"photos"`
+	Photos struct {
+		Page    int64   `json:"page"`
+		Pages   int64   `json:"pages"`
+		Perpage int64   `json:"perpage"`
+		Total   string  `json:"total"`
+		Photo   []Photo `json:"photo"`
+	} `json:"photos"`
 	//Stat   string `json:"stat"`
 	Common
 }
