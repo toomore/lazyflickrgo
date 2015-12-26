@@ -4,18 +4,18 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"strconv"
+	"sync"
 
 	"github.com/toomore/lazyflickrgo/jsonstruct"
 	"github.com/toomore/lazyflickrgo/utils"
 )
 
-// PhotosSearch search photos.
-//
-// https://www.flickr.com/services/api/flickr.photos.search.html
-func (f Flickr) PhotosSearch(Args map[string]string) jsonstruct.PhotosSearch {
-	Args["method"] = "flickr.photos.search"
+var wg sync.WaitGroup
 
-	resp := f.HTTPGet(utils.APIURL, Args)
+func readPhotosSerch(f Flickr, args map[string]string) jsonstruct.PhotosSearch {
+	defer wg.Done()
+	resp := f.HTTPGet(utils.APIURL, args)
 	jsonData, _ := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 
@@ -24,6 +24,39 @@ func (f Flickr) PhotosSearch(Args map[string]string) jsonstruct.PhotosSearch {
 		log.Println(err)
 	}
 	return data
+}
+
+// PhotosSearch search photos.
+//
+// https://www.flickr.com/services/api/flickr.photos.search.html
+func (f Flickr) PhotosSearch(Args map[string]string) []jsonstruct.PhotosSearch {
+	Args["method"] = "flickr.photos.search"
+	Args["per_page"] = "500"
+
+	wg.Add(1)
+	data := readPhotosSerch(f, Args)
+
+	if data.Photos.Pages > 1 {
+		result := make([]jsonstruct.PhotosSearch, data.Photos.Pages)
+		result[0] = data
+
+		wg.Add(data.Photos.Pages - 1)
+		go func() {
+			for i := 2; i <= data.Photos.Pages; i++ {
+				go func(i int, Args map[string]string) {
+					args := make(map[string]string)
+					for k, v := range Args {
+						args[k] = v
+					}
+					args["page"] = strconv.Itoa(i)
+					result[i-1] = readPhotosSerch(f, args)
+				}(i, Args)
+			}
+		}()
+		wg.Wait()
+		return result
+	}
+	return []jsonstruct.PhotosSearch{data}
 }
 
 // PhotosGetInfo get photo info.

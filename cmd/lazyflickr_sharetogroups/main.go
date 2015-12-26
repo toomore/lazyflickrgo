@@ -50,7 +50,12 @@ func fromSearch(f *flickr.Flickr) []jsonstruct.Photo {
 
 	searchResult := f.PhotosSearch(args)
 
-	return searchResult.Photos.Photo
+	var result []jsonstruct.Photo
+	for _, val := range searchResult {
+		result = append(result, val.Photos.Photo...)
+	}
+
+	return result
 }
 
 func main() {
@@ -83,8 +88,16 @@ func main() {
 	for _, groupid := range strings.Split(*groupID, ",") {
 		wg.Add(*shareN)
 
-		startInt := rand.New(rand.NewSource(time.Now().UnixNano())).Int() % (num - *shareN)
-		for _, val := range rand.New(rand.NewSource(time.Now().UnixNano())).Perm(num)[startInt : startInt+*shareN] {
+		var randlist []int
+		startInt := rand.New(rand.NewSource(time.Now().UnixNano())).Int()
+		if (num - *shareN) > 0 {
+			startInt = startInt % (num - *shareN)
+			randlist = rand.New(rand.NewSource(time.Now().UnixNano())).Perm(num)[startInt : startInt+*shareN]
+		} else {
+			randlist = rand.New(rand.NewSource(time.Now().UnixNano())).Perm(num)[:*shareN]
+		}
+
+		for _, val := range randlist {
 			photo := photos[val]
 			log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
 			go func(photo jsonstruct.Photo, groupid string, val int) {

@@ -37,6 +37,9 @@ func (f Flickr) HTTPGet(URL string, Args map[string]string) *http.Response {
 		Args[key] = val
 	}
 
+	if _, ok := Args["api_sig"]; ok {
+		delete(Args, "api_sig")
+	}
 	Args["api_sig"] = utils.Sign(Args, f.secretKey)
 
 	query := url.Values{}

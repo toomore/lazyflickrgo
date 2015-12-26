@@ -22,18 +22,24 @@ func TestFlickr_PhotosSearch(*testing.T) {
 
 	args := make(map[string]string)
 	args["user_id"] = os.Getenv("FLICKRUSER")
-	args["tags"] = "lomo,kodak"
+	//args["tags"] = "lomo,kodak"
+	args["tags"] = "nikon"
 	args["tag_mode"] = "all"
 	args["sort"] = "date-posted-desc"
 
-	data := t.PhotosSearch(args)
+	datapages := t.PhotosSearch(args)
 
-	for i, vals := range data.Photos.Photo {
-		log.Printf("%02d %+v\n", i, vals)
-		//log.Printf("https://www.flickr.com/photos/%s/%s\n", vals.Owner, vals.ID)
+	for _, data := range datapages {
+		log.Printf(">>>>>>>>>>>>> %d \n", data.Photos.Page)
+		log.Printf(">>>>>>>>>>>>>Perpage %d \n", len(data.Photos.Photo))
+		//for i, vals := range data.Photos.Photo {
+		//	log.Printf("%02d %+v\n", i, vals)
+		//	//log.Printf("https://www.flickr.com/photos/%s/%s\n", vals.Owner, vals.ID)
+		//}
+		//log.Printf("%+v", data)
 	}
+	log.Println(args)
 
-	log.Printf("%+v", data)
 }
 
 func TestFlickr_Post(*testing.T) {
