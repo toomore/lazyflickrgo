@@ -57,7 +57,8 @@ func outPut(result <-chan jsonstruct.GroupsGetInfo) <-chan struct{} {
 	go func() {
 		defer close(done)
 		for data := range result {
-			log.Printf("%s => %s\n", data.Group.Name.Content, info(data.Group.ID))
+			log.Printf("[%s] %s => %s\n",
+				data.Group.PathAlias, data.Group.Name.Content, info(data.Group.ID))
 		}
 	}()
 	return done
