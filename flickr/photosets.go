@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
+	"runtime"
 	"strconv"
 	"sync"
 
@@ -44,8 +45,10 @@ func (f Flickr) PhotosetsGetPhotosAll(photosetID string, userID string) []jsonst
 	wg.Add(pages)
 
 	go func() {
+		runtime.Gosched()
 		for i := 0; i < pages; i++ {
 			go func(i int) {
+				runtime.Gosched()
 				defer wg.Done()
 				result[i] = f.PhotosetsGetPhotos(photosetID, userID, i+1)
 			}(i)
