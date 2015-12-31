@@ -2,7 +2,6 @@ package flickr
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"math"
 	"runtime"
@@ -24,9 +23,7 @@ func (f Flickr) PhotosetsGetPhotos(photosetID string, userID string, page int) j
 	args["per_page"] = strconv.Itoa(perPage)
 	args["page"] = strconv.Itoa(page)
 
-	resp := f.HTTPGet(utils.APIURL, args)
-	jsonData, _ := ioutil.ReadAll(resp.Body)
-	defer resp.Body.Close()
+	jsonData := f.HTTPGet(utils.APIURL, args)
 
 	var data jsonstruct.PhotosetsGetPhotos
 	if err := json.Unmarshal(jsonData, &data); err != nil {
@@ -65,9 +62,7 @@ func (f Flickr) PhotosetsGetInfo(photosetID string, userID string) jsonstruct.Ph
 	args["photoset_id"] = photosetID
 	args["user_id"] = userID
 
-	resp := f.HTTPGet(utils.APIURL, args)
-	jsonData, _ := ioutil.ReadAll(resp.Body)
-	defer resp.Body.Close()
+	jsonData := f.HTTPGet(utils.APIURL, args)
 
 	var data jsonstruct.PhotosetsGetInfo
 	if err := json.Unmarshal(jsonData, &data); err != nil {

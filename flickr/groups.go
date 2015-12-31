@@ -2,7 +2,6 @@ package flickr
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 
 	"github.com/toomore/lazyflickrgo/jsonstruct"
@@ -17,9 +16,7 @@ func (f Flickr) GroupsPoolsAdd(GroupsID string, PhotosID string) jsonstruct.Comm
 	data["photo_id"] = PhotosID
 	data["auth_token"] = f.AuthToken
 
-	resp := f.HTTPPost(utils.APIURL, data)
-	jsonData, _ := ioutil.ReadAll(resp.Body)
-	defer resp.Body.Close()
+	jsonData := f.HTTPPost(utils.APIURL, data)
 
 	var result jsonstruct.Common
 	if err := json.Unmarshal(jsonData, &result); err != nil {
@@ -39,9 +36,8 @@ func (f Flickr) GroupsGetInfo(GroupID string, PathAlias string) jsonstruct.Group
 	if PathAlias != "" {
 		args["group_path_alias"] = PathAlias
 	}
-	resp := f.HTTPGet(utils.APIURL, args)
-	jsonData, _ := ioutil.ReadAll(resp.Body)
-	defer resp.Body.Close()
+
+	jsonData := f.HTTPGet(utils.APIURL, args)
 
 	var result jsonstruct.GroupsGetInfo
 	if err := json.Unmarshal(jsonData, &result); err != nil {

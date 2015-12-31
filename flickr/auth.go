@@ -2,7 +2,6 @@ package flickr
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 
 	"github.com/toomore/lazyflickrgo/jsonstruct"
@@ -12,9 +11,7 @@ import (
 // AuthGetFrob to get Frob link.
 func (f Flickr) AuthGetFrob() jsonstruct.AuthGetFrob {
 	Args := map[string]string{"method": "flickr.auth.getFrob"}
-	resp := f.HTTPGet(utils.APIURL, Args)
-	jsonData, _ := ioutil.ReadAll(resp.Body)
-	defer resp.Body.Close()
+	jsonData := f.HTTPGet(utils.APIURL, Args)
 
 	var data jsonstruct.AuthGetFrob
 	if err := json.Unmarshal(jsonData, &data); err != nil {
@@ -29,10 +26,8 @@ func (f Flickr) AuthGetToken(frob string) jsonstruct.AuthGetToken {
 	args["method"] = "flickr.auth.getToken"
 	args["frob"] = frob
 
-	resp := f.HTTPGet(utils.APIURL, args)
-	jsonData, _ := ioutil.ReadAll(resp.Body)
+	jsonData := f.HTTPGet(utils.APIURL, args)
 	log.Printf("%s\n", jsonData)
-	defer resp.Body.Close()
 
 	var data jsonstruct.AuthGetToken
 	if err := json.Unmarshal(jsonData, &data); err != nil {

@@ -2,7 +2,6 @@ package flickr
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"strconv"
 	"sync"
@@ -15,9 +14,7 @@ var wg sync.WaitGroup
 
 func readPhotosSerch(f Flickr, args map[string]string) jsonstruct.PhotosSearch {
 	defer wg.Done()
-	resp := f.HTTPGet(utils.APIURL, args)
-	jsonData, _ := ioutil.ReadAll(resp.Body)
-	defer resp.Body.Close()
+	jsonData := f.HTTPGet(utils.APIURL, args)
 
 	var data jsonstruct.PhotosSearch
 	if err := json.Unmarshal(jsonData, &data); err != nil {
@@ -67,9 +64,7 @@ func (f Flickr) PhotosGetInfo(photoID string) jsonstruct.PhotosGetInfo {
 	Args["method"] = "flickr.photos.getInfo"
 	Args["photo_id"] = photoID
 
-	resp := f.HTTPGet(utils.APIURL, Args)
-	jsonData, _ := ioutil.ReadAll(resp.Body)
-	defer resp.Body.Close()
+	jsonData := f.HTTPGet(utils.APIURL, Args)
 
 	var data jsonstruct.PhotosGetInfo
 	if err := json.Unmarshal(jsonData, &data); err != nil {

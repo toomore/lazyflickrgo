@@ -2,9 +2,13 @@
 package flickr
 
 import (
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
+	"runtime"
 
 	"github.com/toomore/lazyflickrgo/utils"
 )
@@ -14,6 +18,19 @@ type Flickr struct {
 	args      map[string]string
 	secretKey string
 	AuthToken string
+}
+
+const tempFolderName = "lzf"
+
+var tempDir string
+
+func init() {
+	tempDir = filepath.Join(getOSRamdiskPath(), tempFolderName)
+	if err := os.Mkdir(tempDir, 0700); os.IsNotExist(err) {
+		tempDir = filepath.Join(os.TempDir(), tempFolderName)
+		os.Mkdir(tempDir, 0700)
+	}
+	log.Println("Temp Dir: ", tempDir)
 }
 
 // NewFlickr is to new a request.
@@ -32,7 +49,7 @@ func NewFlickr(APIKey string, SecretKey string) *Flickr {
 }
 
 // HTTPGet method request.
-func (f Flickr) HTTPGet(URL string, Args map[string]string) *http.Response {
+func (f Flickr) HTTPGet(URL string, Args map[string]string) []byte {
 	for key, val := range f.args {
 		Args[key] = val
 	}
@@ -52,17 +69,24 @@ func (f Flickr) HTTPGet(URL string, Args map[string]string) *http.Response {
 		log.Fatalln(err)
 	}
 	url.RawQuery = query.Encode()
-	log.Println("Get: ", url.String())
-	resp, err := http.Get(url.String())
-	if err != nil {
-		log.Fatalln(err)
+	var data []byte
+	if data, _ = readFile(Args["api_sig"]); data == nil {
+		log.Println("Get: ", url.String())
+		resp, err := http.Get(url.String())
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		data, _ = ioutil.ReadAll(resp.Body)
+		defer resp.Body.Close()
+		saveFile(Args["api_sig"], data)
 	}
 
-	return resp
+	return data
 }
 
 // HTTPPost method request.
-func (f Flickr) HTTPPost(urlpath string, Data map[string]string) *http.Response {
+func (f Flickr) HTTPPost(urlpath string, Data map[string]string) []byte {
 	for key, val := range f.args {
 		Data[key] = val
 	}
@@ -80,6 +104,36 @@ func (f Flickr) HTTPPost(urlpath string, Data map[string]string) *http.Response 
 	if err != nil {
 		log.Fatalln(err)
 	}
+	data, _ := ioutil.ReadAll(resp.Body)
 
-	return resp
+	return data
+}
+
+func getOSRamdiskPath() string {
+	switch runtime.GOOS {
+	//case "darwin":
+	//	return "/Volumes/RamDisk/"
+	case "linux":
+		return "/run/shm/"
+	default:
+		return os.TempDir()
+	}
+}
+
+func readFile(name string) ([]byte, error) {
+	var err error
+	if file, err := os.Open(filepath.Join(tempDir, name)); err == nil {
+		defer file.Close()
+		return ioutil.ReadAll(file)
+	}
+	return nil, err
+}
+
+func saveFile(name string, data []byte) error {
+	var err error
+	if file, err := os.Create(filepath.Join(tempDir, name)); err == nil {
+		defer file.Close()
+		file.Write(data)
+	}
+	return err
 }
