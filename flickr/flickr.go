@@ -6,10 +6,8 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
-	"path/filepath"
-	"runtime"
 
+	"github.com/toomore/lazyflickrgo/simplecache"
 	"github.com/toomore/lazyflickrgo/utils"
 )
 
@@ -20,17 +18,12 @@ type Flickr struct {
 	AuthToken string
 }
 
-const tempFolderName = "lzf"
-
 var tempDir string
+var cache *simplecache.SimlpleCache
 
 func init() {
-	tempDir = filepath.Join(getOSRamdiskPath(), tempFolderName)
-	if err := os.Mkdir(tempDir, 0700); os.IsNotExist(err) {
-		tempDir = filepath.Join(os.TempDir(), tempFolderName)
-		os.Mkdir(tempDir, 0700)
-	}
-	log.Println("Temp Dir: ", tempDir)
+	cache = simplecache.NewSimpleCache("", "lzf")
+	log.Println("Temp Dir: ", cache.Dir, cache.Folder)
 }
 
 // NewFlickr is to new a request.
@@ -70,7 +63,7 @@ func (f Flickr) HTTPGet(URL string, Args map[string]string) []byte {
 	}
 	url.RawQuery = query.Encode()
 	var data []byte
-	if data, _ = readFile(Args["api_sig"]); data == nil {
+	if data, _ = cache.Get(Args["api_sig"]); data == nil {
 		log.Println("Get: ", url.String())
 		resp, err := http.Get(url.String())
 		if err != nil {
@@ -79,7 +72,7 @@ func (f Flickr) HTTPGet(URL string, Args map[string]string) []byte {
 
 		data, _ = ioutil.ReadAll(resp.Body)
 		defer resp.Body.Close()
-		saveFile(Args["api_sig"], data)
+		cache.Set(Args["api_sig"], data)
 	}
 
 	return data
@@ -107,33 +100,4 @@ func (f Flickr) HTTPPost(urlpath string, Data map[string]string) []byte {
 	data, _ := ioutil.ReadAll(resp.Body)
 
 	return data
-}
-
-func getOSRamdiskPath() string {
-	switch runtime.GOOS {
-	//case "darwin":
-	//	return "/Volumes/RamDisk/"
-	case "linux":
-		return "/run/shm/"
-	default:
-		return os.TempDir()
-	}
-}
-
-func readFile(name string) ([]byte, error) {
-	var err error
-	if file, err := os.Open(filepath.Join(tempDir, name)); err == nil {
-		defer file.Close()
-		return ioutil.ReadAll(file)
-	}
-	return nil, err
-}
-
-func saveFile(name string, data []byte) error {
-	var err error
-	if file, err := os.Create(filepath.Join(tempDir, name)); err == nil {
-		defer file.Close()
-		file.Write(data)
-	}
-	return err
 }
