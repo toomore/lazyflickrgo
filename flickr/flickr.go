@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/toomore/lazyflickrgo/simplecache"
 	"github.com/toomore/lazyflickrgo/utils"
@@ -22,8 +23,8 @@ var tempDir string
 var cache *simplecache.SimlpleCache
 
 func init() {
-	cache = simplecache.NewSimpleCache("", "lzf")
-	log.Println("Temp Dir: ", cache.Dir, cache.Folder)
+	cache = simplecache.NewSimpleCache("", "lzf", 24*time.Hour)
+	log.Printf("Temp Dir: %s/%s, Expired: %s\n", cache.Dir, cache.Folder, cache.Expired)
 }
 
 // NewFlickr is to new a request.
