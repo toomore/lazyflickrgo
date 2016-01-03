@@ -36,20 +36,23 @@ func main() {
 	t.Token = os.Getenv("TUMBLRUSERTOKEN")
 	t.TokenSecret = os.Getenv("TUMBLRUSERSECRET")
 
-	num := len(flag.Args())
-	photolist := make([]jsonstruct.PhotosGetInfo, num)
-	wg.Add(num)
-	for i, photoID := range flag.Args() {
-		go func(i int, photoID string) {
-			runtime.Gosched()
-			defer wg.Done()
-			photolist[i] = f.PhotosGetInfo(photoID)
-		}(i, photoID)
-	}
+	photolist := make(chan jsonstruct.PhotosGetInfo)
+	wg.Add(flag.NArg())
+	go func() {
+		for i, photoID := range flag.Args() {
+			go func(i int, photoID string) {
+				runtime.Gosched()
+				photolist <- f.PhotosGetInfo(photoID)
+			}(i, photoID)
+		}
+	}()
 
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(photolist)
+	}()
 
-	for _, photo := range photolist {
+	for photo := range photolist {
 		args := make(map[string]string)
 		args["source"] = fmt.Sprintf(imageFormat,
 			photo.Photo.Farm,
@@ -83,5 +86,6 @@ func main() {
 			log.Println(warn("[Error:%d] [%s] %s",
 				resp.StatusCode, photo.Photo.ID, photo.Photo.Title.Content))
 		}
+		wg.Done()
 	}
 }
