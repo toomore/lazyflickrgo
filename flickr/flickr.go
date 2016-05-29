@@ -2,6 +2,7 @@
 package flickr
 
 import (
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -24,7 +25,7 @@ var cache *simplecache.SimlpleCache
 
 func init() {
 	cache = simplecache.NewSimpleCache("", "lzf", 24*time.Hour)
-	log.Printf("Temp Dir: %s/%s, Expired: %s\n", cache.Dir, cache.Folder, cache.Expired)
+	log.Printf("Temp Dir: %s%s, Expired: %s\n", cache.Dir, cache.Folder, cache.Expired)
 }
 
 // NewFlickr is to new a request.
@@ -72,7 +73,16 @@ func (f Flickr) HTTPGet(URL string, Args map[string]string) []byte {
 		}
 
 		data, _ = ioutil.ReadAll(resp.Body)
-		defer resp.Body.Close()
+		//defer resp.Body.Close()
+
+		// Fixed connection reuse
+		// https://github.com/google/go-github/pull/317
+		defer func(body io.ReadCloser) {
+			if resp.Body != nil {
+				io.Copy(ioutil.Discard, body)
+				body.Close()
+			}
+		}(resp.Body)
 		cache.Set(Args["api_sig"], data)
 	}
 
