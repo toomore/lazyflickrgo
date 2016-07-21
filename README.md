@@ -10,6 +10,7 @@ Completed:
 - AuthGetToken (`flickr.auth.getToken`)
 - GroupsGetInfo (`flickr.groups.getInfo`)
 - GroupsPoolsAdd (`flickr.groups.pools.add`)
+- PeopleFindByEmail (`flickr.people.findByEmail`)
 - PhotosGetInfo (`flickr.photos.getInfo`)
 - PhotosSearch (`flickr.photos.search`)
 - PhotosetsGetInfo (`flickr.photosets.getInfo`)
