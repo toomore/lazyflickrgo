@@ -1,7 +1,6 @@
 package flickr
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"testing"
@@ -52,9 +51,7 @@ func TestFlickr_Post(*testing.T) {
 	data["auth_token"] = os.Getenv("FLICKRUSERTOKEN")
 
 	resp := t.HTTPPost(utils.APIURL, data)
-	body, err := ioutil.ReadAll(resp.Body)
-	defer resp.Body.Close()
-	log.Printf("%s, %s\n", body, err)
+	log.Printf("%s\n ", resp)
 }
 
 func TestFlickr_AuthGetFrob(*testing.T) {
@@ -111,5 +108,15 @@ func TestFlickr_PhotosGetInfo(*testing.T) {
 	t := getFlickr()
 	log.Printf("%+v\n",
 		t.PhotosGetInfo("23544438000"),
+	)
+}
+
+func TestFlickr_PeopleFindByEmail(*testing.T) {
+	t := getFlickr()
+	log.Printf("%+v\n",
+		t.PeopleFindByEmail("toomore0929@gmail.com"),
+	)
+	log.Printf("%+v\n",
+		t.PeopleFindByEmail("toomore"),
 	)
 }

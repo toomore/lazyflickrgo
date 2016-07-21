@@ -184,6 +184,20 @@ type GroupsGetInfo struct {
 	Common
 }
 
+// PeopleFindByEmail struct
+type PeopleFindByEmail struct {
+	User struct {
+		ID       string `json:"id"`
+		Nsid     string `json:"nsid"`
+		Username struct {
+			Content string `json:"_content"`
+		} `json:"username"`
+	} `json:"user"`
+	Stat    string `json:"stat"`
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
 // GetTokenURL to output link.
 func (auth AuthGetFrob) GetTokenURL(APIKey string, secretKey string) string {
 	args := make(map[string]string)
