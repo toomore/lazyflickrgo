@@ -184,8 +184,8 @@ type GroupsGetInfo struct {
 	Common
 }
 
-// PeopleFindByEmail struct
-type PeopleFindByEmail struct {
+// PeopleFindBy struct
+type PeopleFindBy struct {
 	User struct {
 		ID       string `json:"id"`
 		Nsid     string `json:"nsid"`

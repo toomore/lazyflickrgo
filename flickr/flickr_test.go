@@ -11,7 +11,7 @@ import (
 func getFlickr() *Flickr {
 	t := NewFlickr(os.Getenv("FLICKRAPIKEY"), os.Getenv("FLICKRSECRET"))
 
-	log.Printf("%+v\n", t)
+	log.Printf("Flickr info: %+v\n", t)
 
 	return t
 }
@@ -114,9 +114,12 @@ func TestFlickr_PhotosGetInfo(*testing.T) {
 func TestFlickr_PeopleFindByEmail(*testing.T) {
 	t := getFlickr()
 	log.Printf("%+v\n",
+		t.PeopleFindByEmail(""),
+	)
+	log.Printf("%+v\n",
 		t.PeopleFindByEmail("toomore0929@gmail.com"),
 	)
 	log.Printf("%+v\n",
-		t.PeopleFindByEmail("toomore"),
+		t.PeopleFindByUsername("toomore"),
 	)
 }
