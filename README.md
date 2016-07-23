@@ -12,6 +12,7 @@ Completed:
 - GroupsPoolsAdd (`flickr.groups.pools.add`)
 - PeopleFindByEmail (`flickr.people.findByEmail`)
 - PeopleFindByUsername (`flickr.people.findByUsername`)
+- PeopleGetGroups(`flickr.people.getGroups`)
 - PhotosGetInfo (`flickr.photos.getInfo`)
 - PhotosSearch (`flickr.photos.search`)
 - PhotosetsGetInfo (`flickr.photosets.getInfo`)
