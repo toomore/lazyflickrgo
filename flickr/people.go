@@ -40,3 +40,23 @@ func (f Flickr) PeopleFindByEmail(email string) jsonstruct.PeopleFindBy {
 func (f Flickr) PeopleFindByUsername(username string) jsonstruct.PeopleFindBy {
 	return f.peopleFindBy(username, "")
 }
+
+// PeopleGetGroups to get user groups list,
+// extras: privacy, throttle, restrictions
+func (f Flickr) PeopleGetGroups(userID, extras string) jsonstruct.PeopleGetGroups {
+	data := make(map[string]string)
+	data["method"] = "flickr.people.getGroups"
+	data["auth_token"] = f.AuthToken
+
+	data["user_id"] = userID
+	if extras != "" {
+		data["extras"] = extras
+	}
+
+	jsonData := f.HTTPPost(utils.APIURL, data)
+	var result jsonstruct.PeopleGetGroups
+	if err := json.Unmarshal(jsonData, &result); err != nil {
+		log.Println(err)
+	}
+	return result
+}

@@ -198,6 +198,30 @@ type PeopleFindBy struct {
 	Message string `json:"message"`
 }
 
+// PeopleGetGroups struct
+type PeopleGetGroups struct {
+	Groups struct {
+		Group []PeopleGroup `json:"group"`
+	} `json:"groups"`
+	Stat string `json:"stat"`
+}
+
+// PeopleGroup struct
+type PeopleGroup struct {
+	Nsid           string `json:"nsid"`
+	Name           string `json:"Name"`
+	Iconfarm       int    `json:"iconfarm"`
+	Iconserver     string `json:"iconserver"`
+	Admin          int    `json:"admin"`
+	Eighteenplus   int    `json:"eighteenplus"`
+	InvitationOnly int    `json:"invitation_only"`
+	Members        string `json:"members"`
+	PoolCount      string `json:"pool_count"`
+	IsMember       int    `json:"is_member"`
+	IsModerator    int    `json:"is_moderator"`
+	IsAdmin        int    `json:"is_admin"`
+}
+
 // GetTokenURL to output link.
 func (auth AuthGetFrob) GetTokenURL(APIKey string, secretKey string) string {
 	args := make(map[string]string)

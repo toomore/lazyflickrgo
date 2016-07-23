@@ -123,3 +123,14 @@ func TestFlickr_PeopleFindByEmail(*testing.T) {
 		t.PeopleFindByUsername("toomore"),
 	)
 }
+
+func TestFlickr_PeopleGetGroups(*testing.T) {
+	t := getFlickr()
+	t.AuthToken = os.Getenv("FLICKRUSERTOKEN")
+	log.Printf("%+v\n",
+		t.PeopleGetGroups("92438116@N00", ""),
+	)
+	//for num, val := range t.PeopleGetGroups("92438116@N00", "").Groups.Group {
+	//	log.Printf("%d %s \n", num, val.Iconserver)
+	//}
+}
