@@ -209,7 +209,7 @@ type PeopleGetGroups struct {
 // PeopleGroup struct
 type PeopleGroup struct {
 	Nsid           string `json:"nsid"`
-	Name           string `json:"Name"`
+	Name           string `json:"name"`
 	Iconfarm       int    `json:"iconfarm"`
 	Iconserver     string `json:"iconserver"`
 	Admin          int    `json:"admin"`
