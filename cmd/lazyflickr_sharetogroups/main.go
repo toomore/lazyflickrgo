@@ -1,3 +1,46 @@
+// cmd/lazyflickr_sharetogroups share photo to groups.
+/*
+Install:
+
+	go install github.com/toomore/lazyflickrgo/cmd/lazyflickr_sharetogroups
+
+Usage:
+
+	lazyflickr_sharetogroups [flags]
+
+The flags are:
+
+	-apikey
+		Flickr API key, default get from env `FLICKRAPIKEY`
+
+	-secret
+		Flickr secret, default get from env `FLICKRSECRET`
+
+	-userid
+		Flickr userid(nsid), default get from env `FLICKRUSER`
+
+	-albumid
+		Album/Set number ID
+
+	-groupid
+		Group number ID
+
+	-n
+		share photos num. default is 6
+
+	-tags
+		Search tags, ',' for split more
+
+	-dryrun
+		Show result without post to groups
+
+Example:
+
+share tag:`lomo,japan` to lomo, lomo.tw groups
+
+	lazyflickr_sharetogroups -tags lomo,japan -groupid 40732537997@N01,72262428@N00
+
+*/
 package main
 
 import (
