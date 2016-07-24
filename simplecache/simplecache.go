@@ -1,3 +1,4 @@
+// Package simplecache for simple using HTTP cache.
 package simplecache
 
 import (

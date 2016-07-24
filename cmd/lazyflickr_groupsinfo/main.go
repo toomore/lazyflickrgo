@@ -1,3 +1,31 @@
+// cmd/lazyflickr_groupsinfo search group id by name.
+/*
+Install:
+
+	go install github.com/toomore/lazyflickrgo/cmd/lazyflickr_groupsinfo
+
+Usage:
+
+	lazyflickr_groupsinfo [flags] <group name>[ <group name> ...]
+
+The flags are:
+
+	-apikey
+		Flickr API key, default get from env `FLICKRAPIKEY`
+
+	-secret
+		Flickr secret, default get from env `FLICKRSECRET`
+
+
+Example:
+	lazyflickr_groupsinfo lomo lomo.tw
+
+Result:
+	2016/07/24 20:08:36 [lomotw] LOMO.tw => 72262428@N00
+	2016/07/24 20:08:36 [lomo] LOMO => 40732537997@N01
+
+
+*/
 package main
 
 import (
