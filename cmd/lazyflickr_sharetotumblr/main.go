@@ -1,3 +1,29 @@
+// cmd/lazyflickr_sharetotumblr for share Flickr to Tumblr.
+/*
+Install:
+
+	go install github.com/toomore/lazyflickrgo/cmd/lazyflickr_sharetotumblr
+
+Usage:
+
+	lazyflickr_sharetotumblr [flags] <flickr photo nsid>[ <flickr photo nsid> ...]
+
+The flags are:
+	-apikey
+		Flickr API key, default get from env `FLICKRAPIKEY`
+
+	-secret
+		Flickr secret, default get from env `FLICKRSECRET`
+
+	-tags
+		Extend more tags, ',' for split
+
+Required env:
+
+	TUMBLRCONSUMERKEY, TUMBLRCONSUMERSECRET
+	TUMBLRUSERBASEHOST, TUMBLRUSERTOKEN, TUMBLRUSERSECRET
+
+*/
 package main
 
 import (
