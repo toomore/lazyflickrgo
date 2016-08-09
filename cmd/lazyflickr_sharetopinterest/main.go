@@ -31,6 +31,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/toomore/lazyflickrgo/flickr"
 	"github.com/toomore/lazyflickrgo/jsonstruct"
@@ -50,6 +51,7 @@ const imageFormat = "https://farm%d.staticflickr.com/%s/%s_%s_o.%s"
 var (
 	board  = flag.String("board", "", "Pin board, <username>/<board_name>")
 	dryRun = flag.Bool("dry_run", false, "Dry run")
+	wg     sync.WaitGroup
 )
 
 // Get HTTP GET
@@ -110,42 +112,47 @@ func main() {
 	//pin.Me()
 	f := flickr.NewFlickr(os.Getenv("FLICKRAPIKEY"), os.Getenv("FLICKRSECRET"))
 
-	var (
-		imageURL string
-		link     string
-		note     string
-		photo    jsonstruct.PhotosGetInfo
-	)
+	wg.Add(len(flag.Args()))
 	for _, photoID := range flag.Args() {
-		photo = f.PhotosGetInfo(photoID)
-		//log.Printf("%+v", photo)
+		go func(photoID string) {
+			defer wg.Done()
+			var (
+				imageURL string
+				link     string
+				note     string
+				photo    jsonstruct.PhotosGetInfo
+			)
+			photo = f.PhotosGetInfo(photoID)
+			//log.Printf("%+v", photo)
 
-		// Tags
-		tags := make([]string, len(photo.Photo.Tags.Tag))
-		for i, tag := range photo.Photo.Tags.Tag {
-			tags[i] = fmt.Sprintf("#%s", strings.Replace(tag.Raw, " ", "_", -1))
-		}
-		//log.Println(tags)
+			// Tags
+			tags := make([]string, len(photo.Photo.Tags.Tag))
+			for i, tag := range photo.Photo.Tags.Tag {
+				tags[i] = fmt.Sprintf("#%s", strings.Replace(tag.Raw, " ", "_", -1))
+			}
+			//log.Println(tags)
 
-		note = fmt.Sprintf("%s - %s - %s",
-			photo.Photo.Title.Content,
-			strings.Replace(photo.Photo.Description.Content, "\n", " ", -1),
-			strings.Join(tags, " "),
-		)
+			note = fmt.Sprintf("%s - %s - %s",
+				photo.Photo.Title.Content,
+				strings.Replace(photo.Photo.Description.Content, "\n", " ", -1),
+				strings.Join(tags, " "),
+			)
 
-		link = photo.Photo.Urls.URL[0].Content
-		imageURL = fmt.Sprintf(imageFormat,
-			photo.Photo.Farm,
-			photo.Photo.Server,
-			photo.Photo.ID,
-			photo.Photo.Orgsecret,
-			photo.Photo.Orgformat)
+			link = photo.Photo.Urls.URL[0].Content
+			imageURL = fmt.Sprintf(imageFormat,
+				photo.Photo.Farm,
+				photo.Photo.Server,
+				photo.Photo.ID,
+				photo.Photo.Orgsecret,
+				photo.Photo.Orgformat)
 
-		log.Println(*board, note, link, imageURL)
-		if !*dryRun {
-			pin.PinsPost(*board, note, link, imageURL)
-		} else {
-			log.Println("Dry Run!")
-		}
+			log.Println(*board, note, link, imageURL)
+			if !*dryRun {
+				pin.PinsPost(*board, note, link, imageURL)
+			} else {
+				log.Println("Dry Run!")
+			}
+		}(photoID)
 	}
+	wg.Wait()
 }
