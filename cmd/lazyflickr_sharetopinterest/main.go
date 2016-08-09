@@ -1,4 +1,25 @@
 // cmd/lazyflickr_sharetopinterest for share Flickr to Pinterest.
+/*
+Install:
+
+	go install github.com/toomore/lazyflickrgo/cmd/lazyflickr_sharetopinterest
+
+Usage:
+
+	lazyflickr_sharetopinterest [flags] <flickr photo nsid>[ <flickr photo nsid> ...]
+
+The flags are:
+	-board
+		Pin board, <username>/<board_name>
+
+	-dryrun
+		Show result without post to groups
+
+Required env:
+
+	PINTEREST_TOKEN, FLICKRAPIKEY, FLICKRSECRET
+
+*/
 package main
 
 import (
@@ -26,8 +47,10 @@ const APIURL = "https://api.pinterest.com"
 // https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{o-secret}_o.(jpg|gif|png)
 const imageFormat = "https://farm%d.staticflickr.com/%s/%s_%s_o.%s"
 
-var board = flag.String("board", "", "Pin board, <username>/<board_name>")
-var dryRun = flag.Bool("dry_run", false, "Dry run")
+var (
+	board  = flag.String("board", "", "Pin board, <username>/<board_name>")
+	dryRun = flag.Bool("dry_run", false, "Dry run")
+)
 
 // Get HTTP GET
 func (p Pinterest) Get(path string, params url.Values) (*http.Response, error) {
@@ -57,6 +80,7 @@ func (p Pinterest) Me() {
 	if err == nil {
 		body, _ := ioutil.ReadAll(resp.Body)
 		log.Printf("%s\n", body)
+		showRatelimit(resp.Header)
 	}
 }
 
@@ -72,7 +96,12 @@ func (p Pinterest) PinsPost(board, note, link, imageURL string) {
 	if err == nil {
 		body, _ := ioutil.ReadAll(resp.Body)
 		log.Printf("%s\n", body)
+		showRatelimit(resp.Header)
 	}
+}
+
+func showRatelimit(Header http.Header) {
+	log.Printf("Remaining: %s, Limit: %s", Header.Get("X-Ratelimit-Remaining"), Header.Get("X-Ratelimit-Limit"))
 }
 
 func main() {
