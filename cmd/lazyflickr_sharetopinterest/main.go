@@ -28,7 +28,8 @@ func (p Pinterest) Get(path string, params url.Values) (*http.Response, error) {
 	return http.Get(url)
 }
 
-func (p Pinterest) me() {
+// Me Get
+func (p Pinterest) Me() {
 	resp, err := p.Get("/v1/me/", nil)
 	if err == nil {
 		body, _ := ioutil.ReadAll(resp.Body)
@@ -38,5 +39,5 @@ func (p Pinterest) me() {
 
 func main() {
 	pin := &Pinterest{AccessToken: os.Getenv("PINTEREST_TOKEN")}
-	pin.me()
+	pin.Me()
 }
