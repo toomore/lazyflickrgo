@@ -33,6 +33,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/fatih/color"
 	"github.com/toomore/lazyflickrgo/flickr"
 	"github.com/toomore/lazyflickrgo/jsonstruct"
 )
@@ -51,7 +52,13 @@ const imageFormat = "https://farm%d.staticflickr.com/%s/%s_%s_o.%s"
 var (
 	board  = flag.String("board", "", "Pin board, <username>/<board_name>")
 	dryRun = flag.Bool("dry_run", false, "Dry run")
-	wg     sync.WaitGroup
+
+	headerInfo = color.New(color.Bold, color.FgCyan).SprintfFunc()
+	httpInfo   = color.New(color.Bold, color.FgBlue).SprintfFunc()
+	info       = color.New(color.Bold, color.FgGreen).SprintfFunc()
+	warn       = color.New(color.Bold, color.FgRed).SprintfFunc()
+
+	wg sync.WaitGroup
 )
 
 // Get HTTP GET
@@ -61,7 +68,7 @@ func (p Pinterest) Get(path string, params url.Values) (*http.Response, error) {
 	}
 	params.Set("access_token", p.AccessToken)
 	url := fmt.Sprintf("%s%s?%s", APIURL, path, params.Encode())
-	log.Printf("Get %s\n", url)
+	log.Println(httpInfo("Get %s", url))
 	return http.Get(url)
 }
 
@@ -72,7 +79,7 @@ func (p Pinterest) Post(path string, data url.Values) (*http.Response, error) {
 	}
 	data.Set("access_token", p.AccessToken)
 	url := fmt.Sprintf("%s%s", APIURL, path)
-	log.Printf("POST %s\n", url)
+	log.Println(httpInfo("POST %s", url))
 	return http.PostForm(url, data)
 }
 
@@ -81,7 +88,7 @@ func (p Pinterest) Me() {
 	resp, err := p.Get("/v1/me/", nil)
 	if err == nil {
 		body, _ := ioutil.ReadAll(resp.Body)
-		log.Printf("%s\n", body)
+		log.Println(info("%s", body))
 		showRatelimit(resp.Header)
 	}
 }
@@ -97,17 +104,24 @@ func (p Pinterest) PinsPost(board, note, link, imageURL string) {
 	resp, err := p.Post("/v1/pins/", data)
 	if err == nil {
 		body, _ := ioutil.ReadAll(resp.Body)
-		log.Printf("%s\n", body)
+		log.Println(info("%s", body))
 		showRatelimit(resp.Header)
 	}
 }
 
 func showRatelimit(Header http.Header) {
-	log.Printf("Remaining: %s, Limit: %s", Header.Get("X-Ratelimit-Remaining"), Header.Get("X-Ratelimit-Limit"))
+	log.Printf(headerInfo("Remaining: %s, Limit: %s",
+		Header.Get("X-Ratelimit-Remaining"),
+		Header.Get("X-Ratelimit-Limit"),
+	))
 }
 
 func main() {
 	flag.Parse()
+	if len(flag.Args()) == 0 {
+		color.Red("No flickr photo ID.")
+		os.Exit(0)
+	}
 	pin := &Pinterest{AccessToken: os.Getenv("PINTEREST_TOKEN")}
 	//pin.Me()
 	f := flickr.NewFlickr(os.Getenv("FLICKRAPIKEY"), os.Getenv("FLICKRSECRET"))
@@ -146,11 +160,11 @@ func main() {
 				photo.Photo.Orgsecret,
 				photo.Photo.Orgformat)
 
-			log.Println(*board, note, link, imageURL)
+			log.Println(color.YellowString("%s:\n%s\n%s\n%s", *board, note, link, imageURL))
 			if !*dryRun {
 				pin.PinsPost(*board, note, link, imageURL)
 			} else {
-				log.Println("Dry Run!")
+				log.Println(warn("[%s]", "Dry Run!"))
 			}
 		}(photoID)
 	}
