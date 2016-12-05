@@ -20,7 +20,12 @@ type Tags struct {
 }
 
 type tag struct {
-	Raw string `json:"raw"`
+	ID         string `json:"id"`
+	Author     string `json:"author"`
+	Authorname string `json:"authorname"`
+	Content    string `json:"_content"`
+	MachineTag int64  `json:"machine_tag"`
+	Raw        string `json:"raw"`
 }
 
 // URL struct
@@ -33,19 +38,64 @@ type urlstr struct {
 	Content string `json:"_content"`
 }
 
+// Place struct
+type Place struct {
+	Content string `json:"_content"`
+	PlaceID string `json:"place_id"`
+	Woeid   string `json:"woeid"`
+}
+
+// Location struct
+type Location struct {
+	Latitude      string `json:"latitude"`
+	Longitude     string `json:"longitude"`
+	Accuracy      string `json:"accuracy"`
+	Context       string `json:"context"`
+	PlaceID       string `json:"place_id"`
+	Woeid         string `json:"woeid"`
+	Neighbourhood Place  `json:"neighbourhood"`
+	Locality      Place  `json:"locality"`
+	County        Place  `json:"county"`
+	Region        Place  `json:"region"`
+	Country       Place  `json:"country"`
+}
+
 // PhotosGetInfo in flickr.photos.getInfo
 type PhotosGetInfo struct {
 	Photo struct {
-		ID          string  `json:"id"`
-		Secret      string  `json:"secret"`
-		Orgsecret   string  `json:"originalsecret"`
-		Orgformat   string  `json:"originalformat"`
-		Server      string  `json:"server"`
-		Farm        int64   `json:"farm"`
-		Title       Content `json:"title"`
-		Description Content `json:"description"`
-		Tags        Tags    `json:"tags"`
-		Urls        URL     `json:"urls"`
+		ID           string   `json:"id"`
+		Dateuploaded string   `json:"dateuploaded"`
+		License      string   `json:"license"`
+		Media        string   `json:"media"`
+		Orgformat    string   `json:"originalformat"`
+		Orgsecret    string   `json:"originalsecret"`
+		Secret       string   `json:"secret"`
+		Server       string   `json:"server"`
+		Views        string   `json:"views"`
+		Farm         int64    `json:"farm"`
+		Rotation     int64    `json:"rotation"`
+		Comments     Content  `json:"comments"`
+		Description  Content  `json:"description"`
+		Title        Content  `json:"title"`
+		Tags         Tags     `json:"tags"`
+		Urls         URL      `json:"urls"`
+		Location     Location `json:"location"`
+		Owner        struct {
+			Iconfarm   int64  `json:"iconfarm"`
+			Iconserver string `json:"iconserver"`
+			Location   string `json:"location"`
+			Nsid       string `json:"nsid"`
+			PathAlias  string `json:"path_alias"`
+			Realname   string `json:"realname"`
+			Username   string `json:"username"`
+		} `json:"owner"`
+		Dates struct {
+			Posted           string `json:"posted"`
+			Taken            string `json:"taken"`
+			Takengranularity int64  `json:"takengranularity"`
+			Takenunknown     string `json:"takenunknown"`
+			Lastupdate       string `json:"lastupdate"`
+		} `json:"dates"`
 	} `json:"photo"`
 	Common
 }
