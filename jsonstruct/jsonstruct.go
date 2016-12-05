@@ -122,6 +122,21 @@ type Photos struct {
 	Photo   []Photo `json:"photo"`
 }
 
+// License struct
+type License struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	URL  string `json:"url"`
+}
+
+// PhotosLicenses struct
+type PhotosLicenses struct {
+	Licenses struct {
+		License []License `json:"license"`
+	} `json:"licenses"`
+	Common
+}
+
 // PhotosSearch in flickr.photos.search
 type PhotosSearch struct {
 	Photos struct {

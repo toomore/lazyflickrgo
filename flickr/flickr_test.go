@@ -111,6 +111,13 @@ func TestFlickr_PhotosGetInfo(*testing.T) {
 	)
 }
 
+func TestFlickr_PhotosLicensesGetInfo(*testing.T) {
+	t := getFlickr()
+	log.Printf("%+v\n",
+		t.PhotosLicensesGetInfo(),
+	)
+}
+
 func TestFlickr_PeopleFindByEmail(*testing.T) {
 	t := getFlickr()
 	log.Printf("%+v\n",

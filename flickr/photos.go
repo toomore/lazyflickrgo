@@ -72,3 +72,18 @@ func (f Flickr) PhotosGetInfo(photoID string) jsonstruct.PhotosGetInfo {
 	}
 	return data
 }
+
+// PhotosLicensesGetInfo get photo licenses list
+//
+// https://www.flickr.com/services/api/flickr.photos.licenses.getInfo.html
+func (f Flickr) PhotosLicensesGetInfo() jsonstruct.PhotosLicenses {
+	Args := make(map[string]string)
+	Args["method"] = "flickr.photos.licenses.getInfo"
+
+	jsonData := f.HTTPGet(utils.APIURL, Args)
+	var data jsonstruct.PhotosLicenses
+	if err := json.Unmarshal(jsonData, &data); err != nil {
+		log.Println(err)
+	}
+	return data
+}
