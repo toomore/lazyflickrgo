@@ -24,8 +24,8 @@ type tag struct {
 	Author     string `json:"author"`
 	Authorname string `json:"authorname"`
 	Content    string `json:"_content"`
-	MachineTag bool   `json:"machine_tag"`
-	Raw        string `json:"raw"`
+	//MachineTag bool   `json:"machine_tag"`
+	Raw string `json:"raw"`
 }
 
 // URL struct
