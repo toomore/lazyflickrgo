@@ -29,6 +29,7 @@ func (f Flickr) GroupsPoolsAdd(GroupsID string, PhotosID string) jsonstruct.Comm
 func (f Flickr) GroupsGetInfo(GroupID string, PathAlias string) jsonstruct.GroupsGetInfo {
 	args := make(map[string]string)
 	args["method"] = "flickr.groups.getInfo"
+	args["auth_token"] = f.AuthToken
 	if GroupID != "" {
 		args["group_id"] = GroupID
 	}

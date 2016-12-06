@@ -231,16 +231,26 @@ type Group struct {
 	ID              string  `json:"id"`
 	PathAlias       string  `json:"path_alias"`
 	IconServer      string  `json:"iconserver"`
+	Lang            string  `json:"lang"`
+	Ispoolmoderated int     `json:"ispoolmoderated"`
 	IconFarm        int     `json:"iconfarm"`
 	Name            Content `json:"name"`
 	Description     Content `json:"description"`
-	Rules           Content `json:"rules"`
 	Members         Content `json:"members"`
 	Poolcount       Content `json:"pool_count"`
 	Topiccount      Content `json:"topic_count"`
 	Privacy         Content `json:"privacy"`
-	Lang            string  `json:"lang"`
-	Ispoolmoderated int     `json:"ispoolmoderated"`
+	Blast           struct {
+		Content        string `json:"_content"`
+		DateBlastAdded string `json:"date_blast_added"`
+		UserID         string `json:"user_id"`
+	} `json:"blast"`
+	Throttle struct {
+		Count     int64  `json:"count,string"`
+		Mode      string `json:"mode"`
+		Remaining int64  `json:"remaining"`
+	} `json:"throttle"`
+	//Rules           Content `json:"rules"`
 }
 
 // GroupsGetInfo struct
