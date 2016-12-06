@@ -94,13 +94,13 @@ func TestFlickr_GroupsGetInfo(*testing.T) {
 	t := getFlickr()
 	t.AuthToken = os.Getenv("FLICKRUSERTOKEN")
 	log.Printf("%+v\n",
-		t.GroupsGetInfo("", "japan_directory_nihon").Group.Throttle,
+		t.GroupsGetInfo("", "japan_directory_nihon", false).Group.Throttle,
 	)
 	log.Printf("%+v\n",
-		t.GroupsGetInfo("11526962@N00", "").Group.Throttle,
+		t.GroupsGetInfo("11526962@N00", "", false).Group.Throttle,
 	)
 	log.Printf("%+v\n",
-		t.GroupsGetInfo("14431758@N00", "").Group.Throttle,
+		t.GroupsGetInfo("14431758@N00", "", true).Group.Throttle,
 	)
 }
 

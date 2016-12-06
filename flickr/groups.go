@@ -2,7 +2,9 @@ package flickr
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
+	"time"
 
 	"github.com/toomore/lazyflickrgo/jsonstruct"
 	"github.com/toomore/lazyflickrgo/utils"
@@ -26,10 +28,13 @@ func (f Flickr) GroupsPoolsAdd(GroupsID string, PhotosID string) jsonstruct.Comm
 }
 
 // GroupsGetInfo for search group by id or path.
-func (f Flickr) GroupsGetInfo(GroupID string, PathAlias string) jsonstruct.GroupsGetInfo {
+func (f Flickr) GroupsGetInfo(GroupID string, PathAlias string, NoCache bool) jsonstruct.GroupsGetInfo {
 	args := make(map[string]string)
 	args["method"] = "flickr.groups.getInfo"
 	args["auth_token"] = f.AuthToken
+	if NoCache {
+		args["t"] = fmt.Sprintf("%d", time.Now().UnixNano())
+	}
 	if GroupID != "" {
 		args["group_id"] = GroupID
 	}
