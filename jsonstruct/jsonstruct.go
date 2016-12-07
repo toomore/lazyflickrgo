@@ -92,8 +92,8 @@ type PhotosGetInfo struct {
 		Dates struct {
 			Posted           string `json:"posted"`
 			Taken            string `json:"taken"`
-			Takengranularity int64  `json:"takengranularity"`
-			Takenunknown     string `json:"takenunknown"`
+			Takengranularity string `json:"takengranularity"`
+			Takenunknown     int64  `json:"takenunknown"`
 			Lastupdate       string `json:"lastupdate"`
 		} `json:"dates"`
 	} `json:"photo"`
