@@ -115,11 +115,11 @@ type Photo struct {
 
 // Photos in flickr.photos.search
 type Photos struct {
-	Page    string      `json:"page"`
-	Pages   int64       `json:"pages"`
-	Perpage int64       `json:"perpage"`
-	Total   interface{} `json:"total"`
-	Photo   []Photo     `json:"photo"`
+	Page    string  `json:"page"`
+	Pages   int64   `json:"pages"`
+	Perpage int64   `json:"perpage"`
+	Total   string  `json:"total"`
+	Photo   []Photo `json:"photo"`
 }
 
 // License struct
@@ -140,11 +140,11 @@ type PhotosLicenses struct {
 // PhotosSearch in flickr.photos.search
 type PhotosSearch struct {
 	Photos struct {
-		Page    int     `json:"page"`
-		Pages   int     `json:"pages"`
-		Perpage int     `json:"perpage"`
-		Total   string  `json:"total"`
-		Photo   []Photo `json:"photo"`
+		Page    int         `json:"page"`
+		Pages   int         `json:"pages"`
+		Perpage int         `json:"perpage"`
+		Total   interface{} `json:"total"`
+		Photo   []Photo     `json:"photo"`
 	} `json:"photos"`
 	//Stat   string `json:"stat"`
 	Common

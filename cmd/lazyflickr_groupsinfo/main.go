@@ -69,7 +69,7 @@ func dogetInfo(name <-chan string) <-chan jsonstruct.GroupsGetInfo {
 		for val := range name {
 			go func(val string) {
 				defer wg.Done()
-				result <- f.GroupsGetInfo("", val)
+				result <- f.GroupsGetInfo("", val, false)
 			}(val)
 		}
 	}()
