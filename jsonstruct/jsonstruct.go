@@ -90,11 +90,11 @@ type PhotosGetInfo struct {
 			Username   string `json:"username"`
 		} `json:"owner"`
 		Dates struct {
-			Posted           string `json:"posted"`
-			Taken            string `json:"taken"`
-			Takengranularity int64  `json:"takengranularity"`
-			Takenunknown     string `json:"takenunknown"`
-			Lastupdate       string `json:"lastupdate"`
+			Posted     string `json:"posted"`
+			Taken      string `json:"taken"`
+			Lastupdate string `json:"lastupdate"`
+			//Takengranularity int64  `json:"takengranularity"`
+			//Takenunknown     string `json:"takenunknown"`
 		} `json:"dates"`
 	} `json:"photo"`
 	Common
