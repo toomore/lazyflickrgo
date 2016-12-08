@@ -10,9 +10,7 @@ import (
 	"github.com/toomore/lazyflickrgo/utils"
 )
 
-var wg sync.WaitGroup
-
-func readPhotosSerch(f Flickr, args map[string]string) jsonstruct.PhotosSearch {
+func readPhotosSerch(f Flickr, args map[string]string, wg *sync.WaitGroup) jsonstruct.PhotosSearch {
 	defer wg.Done()
 	jsonData := f.HTTPGet(utils.APIURL, args)
 
@@ -30,9 +28,11 @@ func (f Flickr) PhotosSearch(Args map[string]string) []jsonstruct.PhotosSearch {
 	Args["method"] = "flickr.photos.search"
 	Args["per_page"] = "500"
 
+	var wg sync.WaitGroup
 	wg.Add(1)
-	data := readPhotosSerch(f, Args)
+	data := readPhotosSerch(f, Args, &wg)
 
+	wg.Wait()
 	if data.Photos.Pages > 1 {
 		result := make([]jsonstruct.PhotosSearch, data.Photos.Pages)
 		result[0] = data
@@ -41,12 +41,8 @@ func (f Flickr) PhotosSearch(Args map[string]string) []jsonstruct.PhotosSearch {
 		go func() {
 			for i := 2; i <= data.Photos.Pages; i++ {
 				go func(i int, Args map[string]string) {
-					args := make(map[string]string)
-					for k, v := range Args {
-						args[k] = v
-					}
-					args["page"] = strconv.Itoa(i)
-					result[i-1] = readPhotosSerch(f, args)
+					Args["page"] = strconv.Itoa(i)
+					result[i-1] = readPhotosSerch(f, Args, &wg)
 				}(i, Args)
 			}
 		}()
