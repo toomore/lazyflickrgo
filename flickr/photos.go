@@ -41,8 +41,12 @@ func (f Flickr) PhotosSearch(Args map[string]string) []jsonstruct.PhotosSearch {
 		go func() {
 			for i := 2; i <= data.Photos.Pages; i++ {
 				go func(i int, Args map[string]string) {
-					Args["page"] = strconv.Itoa(i)
-					result[i-1] = readPhotosSerch(f, Args, &wg)
+					args := make(map[string]string)
+					for k, v := range Args {
+						args[k] = v
+					}
+					args["page"] = strconv.Itoa(i)
+					result[i-1] = readPhotosSerch(f, args, &wg)
 				}(i, Args)
 			}
 		}()
@@ -78,6 +82,22 @@ func (f Flickr) PhotosLicensesGetInfo() jsonstruct.PhotosLicenses {
 
 	jsonData := f.HTTPGet(utils.APIURL, Args)
 	var data jsonstruct.PhotosLicenses
+	if err := json.Unmarshal(jsonData, &data); err != nil {
+		log.Println(err)
+	}
+	return data
+}
+
+// PhotosGetSizes get photo sizes
+//
+// https://www.flickr.com/services/api/flickr.photos.getSizes.html
+func (f Flickr) PhotosGetSizes(photoID string) jsonstruct.PhotoSizes {
+	Args := make(map[string]string)
+	Args["method"] = "flickr.photos.getSizes"
+	Args["photo_id"] = photoID
+
+	jsonData := f.HTTPGet(utils.APIURL, Args)
+	var data jsonstruct.PhotoSizes
 	if err := json.Unmarshal(jsonData, &data); err != nil {
 		log.Println(err)
 	}

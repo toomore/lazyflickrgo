@@ -118,6 +118,15 @@ func TestFlickr_PhotosGetInfo(*testing.T) {
 	)
 }
 
+func TestFlickr_PhotosGetSizes(*testing.T) {
+	t := getFlickr()
+	sizes := t.PhotosGetSizes("32009295346")
+	log.Printf("%+v\n", sizes)
+	log.Printf("%s\n", sizes.Sizes.Size[3].Width)
+	width, _ := sizes.Sizes.Size[3].Width.Int64()
+	log.Println(width)
+}
+
 func TestFlickr_PhotosLicensesGetInfo(*testing.T) {
 	t := getFlickr()
 	log.Printf("%+v\n",

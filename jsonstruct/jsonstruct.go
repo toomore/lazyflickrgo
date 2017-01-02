@@ -2,6 +2,7 @@
 package jsonstruct
 
 import (
+	"encoding/json"
 	"net/url"
 
 	"github.com/toomore/lazyflickrgo/utils"
@@ -120,6 +121,27 @@ type Photos struct {
 	Perpage int64   `json:"perpage"`
 	Total   string  `json:"total"`
 	Photo   []Photo `json:"photo"`
+}
+
+// PhotoSizes struct
+type PhotoSizes struct {
+	Sizes struct {
+		Canblog     int64       `json:"canblog"`
+		Candownload int64       `json:"candownload"`
+		Canprint    int64       `json:"canprint"`
+		Size        []PhotoSize `json:"size"`
+		Stat        string      `json:"stat"`
+	} `json:"sizes"`
+}
+
+// PhotoSize struct
+type PhotoSize struct {
+	Label  string      `json:"label"`
+	Width  json.Number `json:"width"`
+	Height json.Number `json:"height"`
+	Source string      `json:"source"`
+	URL    string      `json:"url"`
+	Media  string      `json:"media"`
 }
 
 // License struct
