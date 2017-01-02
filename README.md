@@ -14,6 +14,7 @@ Completed:
 - PeopleFindByUsername (`flickr.people.findByUsername`)
 - PeopleGetGroups(`flickr.people.getGroups`)
 - PhotosGetInfo (`flickr.photos.getInfo`)
+- PhotosGetSizes(`flickr.photos.getSizes`)
 - PhotosLicensesGetInfo (`flickr.photos.licenses.getInfo`)
 - PhotosSearch (`flickr.photos.search`)
 - PhotosetsGetInfo (`flickr.photosets.getInfo`)
