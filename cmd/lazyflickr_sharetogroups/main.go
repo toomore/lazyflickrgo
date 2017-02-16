@@ -103,6 +103,28 @@ func fromSearch(f *flickr.Flickr) []jsonstruct.Photo {
 	return result
 }
 
+func send(groupid string, photos []jsonstruct.Photo, randlist []int, f *flickr.Flickr, wg *sync.WaitGroup) {
+	runtime.Gosched()
+	for _, val := range randlist {
+		photo := photos[val]
+		log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
+		go func(photo jsonstruct.Photo, groupid string, val int, wg *sync.WaitGroup) {
+			runtime.Gosched()
+			defer wg.Done()
+			if *dryrun == false {
+				resp := f.GroupsPoolsAdd(groupid, photo.ID)
+				if resp.Stat == "ok" {
+					log.Println(info("[%s] %s %s", groupid, photo.ID, photo.Title))
+				} else {
+					log.Println(warn("[%s] %s(%d) %s %s", groupid, resp.Message, resp.Code, photo.ID, photo.Title))
+				}
+			} else {
+				log.Println(debugc("[DryRun] [%s] %s %s", groupid, photo.ID, photo.Title))
+			}
+		}(photo, groupid, val, wg)
+	}
+}
+
 func main() {
 	flag.Parse()
 
@@ -142,27 +164,7 @@ func main() {
 			randlist = rand.New(rand.NewSource(time.Now().UnixNano())).Perm(num)[:*shareN]
 		}
 
-		go func(groupid string) {
-			runtime.Gosched()
-			for _, val := range randlist {
-				photo := photos[val]
-				log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
-				go func(photo jsonstruct.Photo, groupid string, val int) {
-					runtime.Gosched()
-					defer wg.Done()
-					if *dryrun == false {
-						resp := f.GroupsPoolsAdd(groupid, photo.ID)
-						if resp.Stat == "ok" {
-							log.Println(info("[%s] %s %s", groupid, photo.ID, photo.Title))
-						} else {
-							log.Println(warn("[%s] %s(%d) %s %s", groupid, resp.Message, resp.Code, photo.ID, photo.Title))
-						}
-					} else {
-						log.Println(debugc("[DryRun] [%s] %s %s", groupid, photo.ID, photo.Title))
-					}
-				}(photo, groupid, val)
-			}
-		}(groupid)
+		go send(groupid, photos, randlist, f, &wg)
 	}
 	wg.Wait()
 	log.Printf("%d/%d photos share to: %s\n", *shareN, num, *groupID)
