@@ -30,6 +30,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"runtime"
@@ -43,9 +44,11 @@ import (
 var (
 	apikey  = flag.String("apikey", os.Getenv("FLICKRAPIKEY"), "Flickr API Key")
 	secret  = flag.String("secret", os.Getenv("FLICKRSECRET"), "Flickr secret")
+	user    = flag.String("u", "", "Get user's all groups info")
 	info    = color.New(color.Bold, color.FgGreen).SprintfFunc()
 	wg      sync.WaitGroup
 	numChan = runtime.NumCPU() * 4
+	f       *flickr.Flickr
 )
 
 func iniPut(args []string) <-chan string {
@@ -62,7 +65,6 @@ func iniPut(args []string) <-chan string {
 }
 
 func dogetInfo(name <-chan string) <-chan jsonstruct.GroupsGetInfo {
-	f := flickr.NewFlickr(*apikey, *secret)
 	result := make(chan jsonstruct.GroupsGetInfo, numChan)
 
 	go func() {
@@ -94,8 +96,18 @@ func outPut(result <-chan jsonstruct.GroupsGetInfo) <-chan struct{} {
 
 func main() {
 	flag.Parse()
+	f = flickr.NewFlickr(*apikey, *secret)
 
-	inData := iniPut(flag.Args())
-	result := dogetInfo(inData)
-	<-outPut(result)
+	if *user == "" {
+		inData := iniPut(flag.Args())
+		result := dogetInfo(inData)
+		<-outPut(result)
+	} else {
+		f.AuthToken = os.Getenv("FLICKRUSERTOKEN")
+		userGroups := f.PeopleGetGroups(*user, "")
+		for i, v := range userGroups.Groups.Group {
+			fmt.Printf("\"%d\",\"%s\",\"%s\",\"%s\",\"%s\"\n", i, v.Name, v.Nsid, v.Members, v.PoolCount)
+		}
+	}
+
 }
