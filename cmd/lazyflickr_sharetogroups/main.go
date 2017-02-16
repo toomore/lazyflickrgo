@@ -62,6 +62,7 @@ var (
 	userID  = flag.String("userid", os.Getenv("FLICKRUSER"), "User number ID")
 	albumID = flag.String("albumid", "", "Album/Set number ID")
 	groupID = flag.String("groupid", "", "Group number ID")
+	photoID = flag.String("photoid", "", "Photo number ID")
 	apikey  = flag.String("apikey", os.Getenv("FLICKRAPIKEY"), "Flickr API Key")
 	secret  = flag.String("secret", os.Getenv("FLICKRSECRET"), "Flickr secret")
 	shareN  = flag.Int("n", 6, "Per share num")
@@ -72,20 +73,23 @@ var (
 	debugc  = color.New(color.Bold, color.FgHiYellow).SprintfFunc()
 	wg      sync.WaitGroup
 	photos  []jsonstruct.Photo
+	f       *flickr.Flickr
 )
 
-func fromSets(f *flickr.Flickr) []jsonstruct.Photo {
+func fromSets() []jsonstruct.Photo {
 	var result []jsonstruct.Photo
 	for _, albumid := range strings.Split(*albumID, ",") {
-		for _, albumdata := range f.PhotosetsGetPhotosAll(albumid, *userID) {
-			result = append(result, albumdata.Photoset.Photos.Photo...)
+		if albumid != "" {
+			for _, albumdata := range f.PhotosetsGetPhotosAll(albumid, *userID) {
+				result = append(result, albumdata.Photoset.Photos.Photo...)
+			}
 		}
 	}
 
 	return result
 }
 
-func fromSearch(f *flickr.Flickr) []jsonstruct.Photo {
+func fromSearch() []jsonstruct.Photo {
 	args := make(map[string]string)
 	args["tags"] = *tags
 	args["tag_mode"] = "all"
@@ -103,7 +107,7 @@ func fromSearch(f *flickr.Flickr) []jsonstruct.Photo {
 	return result
 }
 
-func addToPool(f *flickr.Flickr, photo jsonstruct.Photo, groupid string, val int) {
+func addToPool(photo jsonstruct.Photo, groupid string, val int) {
 	runtime.Gosched()
 	defer wg.Done()
 	if *dryrun == false {
@@ -118,38 +122,37 @@ func addToPool(f *flickr.Flickr, photo jsonstruct.Photo, groupid string, val int
 	}
 }
 
-func send(groupid string, photos []jsonstruct.Photo, randlist []int, f *flickr.Flickr) {
+func addToPoolByPhotoID(groupid string, photoid string) {
+	runtime.Gosched()
+	defer wg.Done()
+	if *dryrun == false {
+		resp := f.GroupsPoolsAdd(groupid, photoid)
+		if resp.Stat == "ok" {
+			log.Println(info("[%s] %s", groupid, photoid))
+		} else {
+			log.Println(warn("[%s] %s(%d) %s", groupid, resp.Message, resp.Code, photoid))
+		}
+	} else {
+		log.Println(debugc("[DryRun] [%s] %s", groupid, photoid))
+	}
+}
+
+func send(groupid string, photos []jsonstruct.Photo, randlist []int) {
 	runtime.Gosched()
 	for _, val := range randlist {
 		photo := photos[val]
 		log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
-		go addToPool(f, photo, groupid, val)
+		go addToPool(photo, groupid, val)
 	}
 }
 
-func main() {
-	flag.Parse()
+func doShareToGroup() {
+	num := len(photos)
 
-	if flag.NFlag() == 0 {
-		flag.PrintDefaults()
-		os.Exit(0)
+	if num == 0 {
+		return
 	}
 
-	var (
-		num int
-		f   *flickr.Flickr
-	)
-
-	f = flickr.NewFlickr(*apikey, *secret)
-	f.AuthToken = os.Getenv("FLICKRUSERTOKEN")
-
-	if *tags == "" {
-		photos = fromSets(f)
-	} else {
-		photos = fromSearch(f)
-	}
-
-	num = len(photos)
 	if num <= *shareN {
 		*shareN = num
 	}
@@ -166,8 +169,59 @@ func main() {
 			randlist = rand.New(rand.NewSource(time.Now().UnixNano())).Perm(num)[:*shareN]
 		}
 
-		go send(groupid, photos, randlist, f)
+		go send(groupid, photos, randlist)
 	}
-	wg.Wait()
 	log.Printf("%d/%d photos share to: %s\n", *shareN, num, *groupID)
+}
+
+func doShareToGroupByPhotoID() {
+	var photoIDs []string
+	for _, v := range strings.Split(*photoID, ",") {
+		if len(v) > 0 {
+			photoIDs = append(photoIDs, v)
+		}
+	}
+	if len(photoIDs) == 0 {
+		return
+	}
+
+	var groupIDs []string
+	for _, v := range strings.Split(*groupID, ",") {
+		if len(v) > 0 {
+			groupIDs = append(groupIDs, v)
+		}
+	}
+	if len(groupIDs) == 0 {
+		return
+	}
+
+	wg.Add(len(photoIDs) * len(groupIDs))
+
+	for _, groupid := range groupIDs {
+		for _, photoid := range photoIDs {
+			addToPoolByPhotoID(groupid, photoid)
+		}
+	}
+}
+
+func main() {
+	flag.Parse()
+
+	if flag.NFlag() == 0 {
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
+
+	f = flickr.NewFlickr(*apikey, *secret)
+	f.AuthToken = os.Getenv("FLICKRUSERTOKEN")
+
+	if *tags == "" {
+		photos = fromSets()
+	} else {
+		photos = fromSearch()
+	}
+
+	doShareToGroup()
+	doShareToGroupByPhotoID()
+	wg.Wait()
 }
