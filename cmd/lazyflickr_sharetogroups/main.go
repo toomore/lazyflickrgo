@@ -103,25 +103,27 @@ func fromSearch(f *flickr.Flickr) []jsonstruct.Photo {
 	return result
 }
 
+func addToPool(f *flickr.Flickr, photo jsonstruct.Photo, groupid string, val int, wg *sync.WaitGroup) {
+	runtime.Gosched()
+	defer wg.Done()
+	if *dryrun == false {
+		resp := f.GroupsPoolsAdd(groupid, photo.ID)
+		if resp.Stat == "ok" {
+			log.Println(info("[%s] %s %s", groupid, photo.ID, photo.Title))
+		} else {
+			log.Println(warn("[%s] %s(%d) %s %s", groupid, resp.Message, resp.Code, photo.ID, photo.Title))
+		}
+	} else {
+		log.Println(debugc("[DryRun] [%s] %s %s", groupid, photo.ID, photo.Title))
+	}
+}
+
 func send(groupid string, photos []jsonstruct.Photo, randlist []int, f *flickr.Flickr, wg *sync.WaitGroup) {
 	runtime.Gosched()
 	for _, val := range randlist {
 		photo := photos[val]
 		log.Println(info("Pick up photo: %d [%s] %+v", val, photo.ID, photo))
-		go func(photo jsonstruct.Photo, groupid string, val int, wg *sync.WaitGroup) {
-			runtime.Gosched()
-			defer wg.Done()
-			if *dryrun == false {
-				resp := f.GroupsPoolsAdd(groupid, photo.ID)
-				if resp.Stat == "ok" {
-					log.Println(info("[%s] %s %s", groupid, photo.ID, photo.Title))
-				} else {
-					log.Println(warn("[%s] %s(%d) %s %s", groupid, resp.Message, resp.Code, photo.ID, photo.Title))
-				}
-			} else {
-				log.Println(debugc("[DryRun] [%s] %s %s", groupid, photo.ID, photo.Title))
-			}
-		}(photo, groupid, val, wg)
+		go addToPool(f, photo, groupid, val, wg)
 	}
 }
 
