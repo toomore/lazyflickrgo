@@ -59,21 +59,22 @@ import (
 )
 
 var (
-	userID  = flag.String("userid", os.Getenv("FLICKRUSER"), "User number ID")
-	albumID = flag.String("albumid", "", "Album/Set number ID")
-	groupID = flag.String("groupid", "", "Group number ID")
-	photoID = flag.String("photoid", "", "Photo number ID")
-	apikey  = flag.String("apikey", os.Getenv("FLICKRAPIKEY"), "Flickr API Key")
-	secret  = flag.String("secret", os.Getenv("FLICKRSECRET"), "Flickr secret")
-	shareN  = flag.Int("n", 6, "Per share num")
-	tags    = flag.String("tags", "", "Search tags, ',' for split more")
-	dryrun  = flag.Bool("dryrun", false, "Show result without post to groups")
-	info    = color.New(color.Bold, color.FgGreen).SprintfFunc()
-	warn    = color.New(color.Bold, color.FgRed).SprintfFunc()
-	debugc  = color.New(color.Bold, color.FgHiYellow).SprintfFunc()
-	wg      sync.WaitGroup
-	photos  []jsonstruct.Photo
-	f       *flickr.Flickr
+	userID      = flag.String("userid", os.Getenv("FLICKRUSER"), "User number ID")
+	albumID     = flag.String("albumid", "", "Album/Set number ID")
+	groupID     = flag.String("groupid", "", "Group number ID")
+	photoID     = flag.String("photoid", "", "Photo number ID")
+	apikey      = flag.String("apikey", os.Getenv("FLICKRAPIKEY"), "Flickr API Key")
+	secret      = flag.String("secret", os.Getenv("FLICKRSECRET"), "Flickr secret")
+	shareN      = flag.Int("n", 6, "Per share num")
+	concurrency = flag.Int("c", 20, "send concurrency")
+	tags        = flag.String("tags", "", "Search tags, ',' for split more")
+	dryrun      = flag.Bool("dryrun", false, "Show result without post to groups")
+	info        = color.New(color.Bold, color.FgGreen).SprintfFunc()
+	warn        = color.New(color.Bold, color.FgRed).SprintfFunc()
+	debugc      = color.New(color.Bold, color.FgHiYellow).SprintfFunc()
+	wg          sync.WaitGroup
+	photos      []jsonstruct.Photo
+	f           *flickr.Flickr
 )
 
 func fromSets() []jsonstruct.Photo {
@@ -122,9 +123,10 @@ func addToPool(photo jsonstruct.Photo, groupid string, val int) {
 	}
 }
 
-func addToPoolByPhotoID(groupid string, photoid string) {
+func addToPoolByPhotoID(groupid string, photoid string, limit chan struct{}) {
 	runtime.Gosched()
 	defer wg.Done()
+	limit <- struct{}{}
 	if *dryrun == false {
 		resp := f.GroupsPoolsAdd(groupid, photoid)
 		if resp.Stat == "ok" {
@@ -135,6 +137,7 @@ func addToPoolByPhotoID(groupid string, photoid string) {
 	} else {
 		log.Println(debugc("[DryRun] [%s] %s", groupid, photoid))
 	}
+	<-limit
 }
 
 func send(groupid string, photos []jsonstruct.Photo, randlist []int) {
@@ -196,10 +199,11 @@ func doShareToGroupByPhotoID() {
 	}
 
 	wg.Add(len(photoIDs) * len(groupIDs))
+	limit := make(chan struct{}, *concurrency)
 
 	for _, groupid := range groupIDs {
 		for _, photoid := range photoIDs {
-			addToPoolByPhotoID(groupid, photoid)
+			go addToPoolByPhotoID(groupid, photoid, limit)
 		}
 	}
 }
