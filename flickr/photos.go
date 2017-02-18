@@ -3,6 +3,7 @@ package flickr
 import (
 	"encoding/json"
 	"log"
+	"runtime"
 	"strconv"
 	"sync"
 
@@ -19,6 +20,16 @@ func readPhotosSerch(f Flickr, args map[string]string, wg *sync.WaitGroup) jsons
 		log.Println(err)
 	}
 	return data
+}
+
+func runMoreSearch(f Flickr, wg *sync.WaitGroup, i int, Args map[string]string, result []jsonstruct.PhotosSearch) {
+	runtime.Gosched()
+	args := make(map[string]string)
+	for k, v := range Args {
+		args[k] = v
+	}
+	args["page"] = strconv.Itoa(i)
+	result[i-1] = readPhotosSerch(f, args, wg)
 }
 
 // PhotosSearch search photos.
@@ -38,18 +49,9 @@ func (f Flickr) PhotosSearch(Args map[string]string) []jsonstruct.PhotosSearch {
 		result[0] = data
 
 		wg.Add(data.Photos.Pages - 1)
-		go func() {
-			for i := 2; i <= data.Photos.Pages; i++ {
-				go func(i int, Args map[string]string) {
-					args := make(map[string]string)
-					for k, v := range Args {
-						args[k] = v
-					}
-					args["page"] = strconv.Itoa(i)
-					result[i-1] = readPhotosSerch(f, args, &wg)
-				}(i, Args)
-			}
-		}()
+		for i := 2; i <= data.Photos.Pages; i++ {
+			go runMoreSearch(f, &wg, i, Args, result)
+		}
 		wg.Wait()
 		return result
 	}

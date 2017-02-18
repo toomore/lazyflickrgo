@@ -116,6 +116,46 @@ func showRatelimit(Header http.Header) {
 	))
 }
 
+func send(f *flickr.Flickr, photoID string, pin *Pinterest, wg *sync.WaitGroup) {
+	defer wg.Done()
+	var (
+		imageURL string
+		link     string
+		note     string
+		photo    jsonstruct.PhotosGetInfo
+	)
+	photo = f.PhotosGetInfo(photoID)
+	//log.Printf("%+v", photo)
+
+	// Tags
+	tags := make([]string, len(photo.Photo.Tags.Tag))
+	for i, tag := range photo.Photo.Tags.Tag {
+		tags[i] = fmt.Sprintf("#%s", strings.Replace(tag.Raw, " ", "_", -1))
+	}
+	//log.Println(tags)
+
+	note = fmt.Sprintf("%s - %s - %s",
+		photo.Photo.Title.Content,
+		strings.Replace(photo.Photo.Description.Content, "\n", " ", -1),
+		strings.Join(tags, " "),
+	)
+
+	link = photo.Photo.Urls.URL[0].Content
+	imageURL = fmt.Sprintf(imageFormat,
+		photo.Photo.Farm,
+		photo.Photo.Server,
+		photo.Photo.ID,
+		photo.Photo.Orgsecret,
+		photo.Photo.Orgformat)
+
+	log.Println(color.YellowString("%s:\n%s\n%s\n%s", *board, note, link, imageURL))
+	if !*dryRun {
+		pin.PinsPost(*board, note, link, imageURL)
+	} else {
+		log.Println(warn("[%s]", "Dry Run!"))
+	}
+}
+
 func main() {
 	flag.Parse()
 	if len(flag.Args()) == 0 {
@@ -128,45 +168,7 @@ func main() {
 
 	wg.Add(len(flag.Args()))
 	for _, photoID := range flag.Args() {
-		go func(photoID string) {
-			defer wg.Done()
-			var (
-				imageURL string
-				link     string
-				note     string
-				photo    jsonstruct.PhotosGetInfo
-			)
-			photo = f.PhotosGetInfo(photoID)
-			//log.Printf("%+v", photo)
-
-			// Tags
-			tags := make([]string, len(photo.Photo.Tags.Tag))
-			for i, tag := range photo.Photo.Tags.Tag {
-				tags[i] = fmt.Sprintf("#%s", strings.Replace(tag.Raw, " ", "_", -1))
-			}
-			//log.Println(tags)
-
-			note = fmt.Sprintf("%s - %s - %s",
-				photo.Photo.Title.Content,
-				strings.Replace(photo.Photo.Description.Content, "\n", " ", -1),
-				strings.Join(tags, " "),
-			)
-
-			link = photo.Photo.Urls.URL[0].Content
-			imageURL = fmt.Sprintf(imageFormat,
-				photo.Photo.Farm,
-				photo.Photo.Server,
-				photo.Photo.ID,
-				photo.Photo.Orgsecret,
-				photo.Photo.Orgformat)
-
-			log.Println(color.YellowString("%s:\n%s\n%s\n%s", *board, note, link, imageURL))
-			if !*dryRun {
-				pin.PinsPost(*board, note, link, imageURL)
-			} else {
-				log.Println(warn("[%s]", "Dry Run!"))
-			}
-		}(photoID)
+		go send(f, photoID, pin, &wg)
 	}
 	wg.Wait()
 }

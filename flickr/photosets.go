@@ -32,6 +32,13 @@ func (f Flickr) PhotosetsGetPhotos(photosetID string, userID string, page int) j
 	return data
 }
 
+func runPhotosetsGetPhotos(f Flickr, photosetID string, userID string, i int, wg *sync.WaitGroup, result []jsonstruct.PhotosetsGetPhotos) {
+
+	runtime.Gosched()
+	defer wg.Done()
+	result[i] = f.PhotosetsGetPhotos(photosetID, userID, i+1)
+}
+
 // PhotosetsGetPhotosAll get all pages data.
 func (f Flickr) PhotosetsGetPhotosAll(photosetID string, userID string) []jsonstruct.PhotosetsGetPhotos {
 	photosetInfo := f.PhotosetsGetInfo(photosetID, userID)
@@ -41,16 +48,9 @@ func (f Flickr) PhotosetsGetPhotosAll(photosetID string, userID string) []jsonst
 	var wg sync.WaitGroup
 	wg.Add(pages)
 
-	go func() {
-		runtime.Gosched()
-		for i := 0; i < pages; i++ {
-			go func(i int) {
-				runtime.Gosched()
-				defer wg.Done()
-				result[i] = f.PhotosetsGetPhotos(photosetID, userID, i+1)
-			}(i)
-		}
-	}()
+	for i := 0; i < pages; i++ {
+		go runPhotosetsGetPhotos(f, photosetID, userID, i, &wg, result)
+	}
 	wg.Wait()
 	return result
 }
