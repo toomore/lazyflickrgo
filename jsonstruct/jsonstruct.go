@@ -9,6 +9,7 @@ import (
 )
 
 // Common return format.
+// easyjson:json
 type Common struct {
 	Stat    string `json:"stat"`
 	Code    int64  `json:"code"`
@@ -16,10 +17,12 @@ type Common struct {
 }
 
 // Tags struct
+// easyjson:json
 type Tags struct {
 	Tag []tag `json:"tag"`
 }
 
+// easyjson:json
 type tag struct {
 	ID         string `json:"id"`
 	Author     string `json:"author"`
@@ -30,16 +33,19 @@ type tag struct {
 }
 
 // URL struct
+// easyjson:json
 type URL struct {
 	URL []urlstr `json:"url"`
 }
 
+// easyjson:json
 type urlstr struct {
 	Type    string `json:"type"`
 	Content string `json:"_content"`
 }
 
 // Place struct
+// easyjson:json
 type Place struct {
 	Content string `json:"_content"`
 	PlaceID string `json:"place_id"`
@@ -47,6 +53,7 @@ type Place struct {
 }
 
 // Location struct
+// easyjson:json
 type Location struct {
 	Latitude      string `json:"latitude"`
 	Longitude     string `json:"longitude"`
@@ -62,6 +69,7 @@ type Location struct {
 }
 
 // PhotosGetInfo in flickr.photos.getInfo
+// easyjson:json
 type PhotosGetInfo struct {
 	Photo struct {
 		ID           string   `json:"id"`
@@ -102,6 +110,7 @@ type PhotosGetInfo struct {
 }
 
 // Photo in flickr.photos.search
+// easyjson:json
 type Photo struct {
 	ID       string `json:"id"`
 	Owner    string `json:"owner"`
@@ -115,6 +124,7 @@ type Photo struct {
 }
 
 // Photos in flickr.photos.search
+// easyjson:json
 type Photos struct {
 	Page    string  `json:"page"`
 	Pages   int64   `json:"pages"`
@@ -124,6 +134,7 @@ type Photos struct {
 }
 
 // PhotoSizes struct
+// easyjson:json
 type PhotoSizes struct {
 	Sizes struct {
 		Canblog     int64       `json:"canblog"`
@@ -135,6 +146,7 @@ type PhotoSizes struct {
 }
 
 // PhotoSize struct
+// easyjson:json
 type PhotoSize struct {
 	Label  string      `json:"label"`
 	Width  json.Number `json:"width"`
@@ -145,6 +157,7 @@ type PhotoSize struct {
 }
 
 // License struct
+// easyjson:json
 type License struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
@@ -152,6 +165,7 @@ type License struct {
 }
 
 // PhotosLicenses struct
+// easyjson:json
 type PhotosLicenses struct {
 	Licenses struct {
 		License []License `json:"license"`
@@ -160,6 +174,7 @@ type PhotosLicenses struct {
 }
 
 // PhotosSearch in flickr.photos.search
+// easyjson:json
 type PhotosSearch struct {
 	Photos struct {
 		Page    int         `json:"page"`
@@ -173,12 +188,14 @@ type PhotosSearch struct {
 }
 
 // AuthGetFrob in flickr.auth.getfrob
+// easyjson:json
 type AuthGetFrob struct {
 	Frob Content `json:"frob"`
 	Common
 }
 
 // Auth struct
+// easyjson:json
 type Auth struct {
 	Token Content `json:"token"`
 	Perms Content `json:"perms"`
@@ -186,12 +203,14 @@ type Auth struct {
 }
 
 // AuthGetToken struct
+// easyjson:json
 type AuthGetToken struct {
 	Auth Auth `json:"auth"`
 	Common
 }
 
 // User struct
+// easyjson:json
 type User struct {
 	Nsid     string `json:"nsid"`
 	Username string `json:"username"`
@@ -199,11 +218,13 @@ type User struct {
 }
 
 // Content common content
+// easyjson:json
 type Content struct {
 	Content string `json:"_content"`
 }
 
 // Photoset struct
+// easyjson:json
 type Photoset struct {
 	ID        string `json:"id"`
 	Primary   string `json:"primary"`
@@ -214,6 +235,7 @@ type Photoset struct {
 }
 
 // PhotosetInfo struct
+// easyjson:json
 type PhotosetInfo struct {
 	ID               string  `json:"id"`
 	Primary          string  `json:"primary"`
@@ -237,18 +259,21 @@ type PhotosetInfo struct {
 }
 
 // PhotosetsGetPhotos struct
+// easyjson:json
 type PhotosetsGetPhotos struct {
 	Photoset Photoset `json:"photoset"`
 	Common
 }
 
 // PhotosetsGetInfo struct
+// easyjson:json
 type PhotosetsGetInfo struct {
 	Photoset PhotosetInfo `json:"photoset"`
 	//Common
 }
 
 // Group struct
+// easyjson:json
 type Group struct {
 	ID              string  `json:"id"`
 	PathAlias       string  `json:"path_alias"`
@@ -276,12 +301,14 @@ type Group struct {
 }
 
 // GroupsGetInfo struct
+// easyjson:json
 type GroupsGetInfo struct {
 	Group Group `json:"group"`
 	Common
 }
 
 // PeopleFindBy struct
+// easyjson:json
 type PeopleFindBy struct {
 	User struct {
 		ID       string `json:"id"`
@@ -296,6 +323,7 @@ type PeopleFindBy struct {
 }
 
 // PeopleGetGroups struct
+// easyjson:json
 type PeopleGetGroups struct {
 	Groups struct {
 		Group []PeopleGroup `json:"group"`
@@ -304,6 +332,7 @@ type PeopleGetGroups struct {
 }
 
 // PeopleGroup struct
+// easyjson:json
 type PeopleGroup struct {
 	Nsid           string `json:"nsid"`
 	Name           string `json:"name"`
