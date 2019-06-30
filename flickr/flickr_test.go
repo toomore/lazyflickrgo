@@ -93,15 +93,18 @@ func TestFlickr_PhotosetsGetPhotosAll(*testing.T) {
 func TestFlickr_GroupsGetInfo(*testing.T) {
 	t := getFlickr()
 	t.AuthToken = os.Getenv("FLICKRUSERTOKEN")
-	log.Printf("%+v\n",
-		t.GroupsGetInfo("", "japan_directory_nihon", false).Group.Throttle,
+	log.Printf("[1] %+v\n",
+		t.GroupsGetInfo("", "japan_directory_nihon", true).Group.Throttle,
 	)
-	log.Printf("%+v\n",
-		t.GroupsGetInfo("11526962@N00", "", false).Group.Throttle,
+	log.Println("---")
+	log.Printf("[2] %+v\n",
+		t.GroupsGetInfo("11526962@N00", "", true).Group.Throttle,
 	)
-	log.Printf("%+v\n",
+	log.Println("---")
+	log.Printf("[3] %+v\n",
 		t.GroupsGetInfo("14431758@N00", "", true).Group.Throttle,
 	)
+	log.Println("---")
 }
 
 func TestFlickr_PhotosetsGetInfo(*testing.T) {
@@ -113,9 +116,14 @@ func TestFlickr_PhotosetsGetInfo(*testing.T) {
 
 func TestFlickr_PhotosGetInfo(*testing.T) {
 	t := getFlickr()
-	log.Printf("%+v\n",
+	log.Printf("[1] %+v\n",
 		t.PhotosGetInfo("23544438000"),
 	)
+	log.Println("---")
+	log.Printf("[2] %+v\n",
+		t.PhotosGetInfo("48126416067"),
+	)
+	log.Println("---")
 }
 
 func TestFlickr_PhotosGetSizes(*testing.T) {

@@ -484,7 +484,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct5(in *jlexer.Le
 		case "place_id":
 			out.PlaceID = string(in.String())
 		case "woeid":
-			out.Woeid = string(in.String())
+			out.Woeid = int64(in.Int64())
 		default:
 			in.SkipRecursive()
 		}
@@ -512,7 +512,7 @@ func easyjson1c889379EncodeGithubComToomoreLazyflickrgoJsonstruct5(out *jwriter.
 	{
 		const prefix string = ",\"woeid\":"
 		out.RawString(prefix)
-		out.String(string(in.Woeid))
+		out.Int64(int64(in.Woeid))
 	}
 	out.RawByte('}')
 }
@@ -921,7 +921,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct9(in *jlexer.Le
 		case "perpage":
 			out.Perpage = int64(in.Int64())
 		case "total":
-			out.Total = string(in.String())
+			out.Total = int64(in.Int64())
 		case "photo":
 			if in.IsNull() {
 				in.Skip()
@@ -1002,7 +1002,7 @@ func easyjson1c889379EncodeGithubComToomoreLazyflickrgoJsonstruct9(out *jwriter.
 	{
 		const prefix string = ",\"total\":"
 		out.RawString(prefix)
-		out.String(string(in.Total))
+		out.Int64(int64(in.Total))
 	}
 	{
 		const prefix string = ",\"photo\":"
@@ -1933,7 +1933,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct13(in *jlexer.L
 		case "perpage":
 			out.Perpage = int64(in.Int64())
 		case "total":
-			out.Total = string(in.String())
+			out.Total = int64(in.Int64())
 		case "photo":
 			if in.IsNull() {
 				in.Skip()
@@ -1989,7 +1989,7 @@ func easyjson1c889379EncodeGithubComToomoreLazyflickrgoJsonstruct13(out *jwriter
 	{
 		const prefix string = ",\"total\":"
 		out.RawString(prefix)
-		out.String(string(in.Total))
+		out.Int64(int64(in.Total))
 	}
 	{
 		const prefix string = ",\"photo\":"

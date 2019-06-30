@@ -49,7 +49,7 @@ type urlstr struct {
 type Place struct {
 	Content string `json:"_content"`
 	PlaceID string `json:"place_id"`
-	Woeid   string `json:"woeid"`
+	Woeid   int64  `json:"woeid"`
 }
 
 // Location struct
@@ -129,7 +129,7 @@ type Photos struct {
 	Page    string  `json:"page"`
 	Pages   int64   `json:"pages"`
 	Perpage int64   `json:"perpage"`
-	Total   string  `json:"total"`
+	Total   int64   `json:"total"`
 	Photo   []Photo `json:"photo"`
 }
 
