@@ -10,9 +10,9 @@ import (
 
 const (
 	// APIURL Flickr API
-	APIURL = "https://api.flickr.com/services/rest/"
+	APIURL = "https://www.flickr.com/services/rest/"
 	// AUTHURL Flickr Auth URL
-	AUTHURL = "http://flickr.com/services/auth/"
+	AUTHURL = "https://www.flickr.com/services/auth/"
 )
 
 // Sign for API `api_sig`
