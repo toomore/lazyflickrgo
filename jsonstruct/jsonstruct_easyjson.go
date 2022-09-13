@@ -1514,7 +1514,7 @@ func (v *PhotosGetInfo) UnmarshalEasyJSON(l *jlexer.Lexer) {
 func easyjson1c889379Decode2(in *jlexer.Lexer, out *struct {
 	ID           string   `json:"id"`
 	Dateuploaded string   `json:"dateuploaded"`
-	License      int64    `json:"license"`
+	License      string   `json:"license"`
 	Media        string   `json:"media"`
 	Orgformat    string   `json:"originalformat"`
 	Orgsecret    string   `json:"originalsecret"`
@@ -1567,7 +1567,7 @@ func easyjson1c889379Decode2(in *jlexer.Lexer, out *struct {
 		case "dateuploaded":
 			out.Dateuploaded = string(in.String())
 		case "license":
-			out.License = int64(in.Int64())
+			out.License = string(in.String())
 		case "media":
 			out.Media = string(in.String())
 		case "originalformat":
@@ -1613,7 +1613,7 @@ func easyjson1c889379Decode2(in *jlexer.Lexer, out *struct {
 func easyjson1c889379Encode2(out *jwriter.Writer, in struct {
 	ID           string   `json:"id"`
 	Dateuploaded string   `json:"dateuploaded"`
-	License      int64    `json:"license"`
+	License      string   `json:"license"`
 	Media        string   `json:"media"`
 	Orgformat    string   `json:"originalformat"`
 	Orgsecret    string   `json:"originalsecret"`
@@ -1659,7 +1659,7 @@ func easyjson1c889379Encode2(out *jwriter.Writer, in struct {
 	{
 		const prefix string = ",\"license\":"
 		out.RawString(prefix)
-		out.Int64(int64(in.License))
+		out.String(string(in.License))
 	}
 	{
 		const prefix string = ",\"media\":"

@@ -74,7 +74,7 @@ type PhotosGetInfo struct {
 	Photo struct {
 		ID           string   `json:"id"`
 		Dateuploaded string   `json:"dateuploaded"`
-		License      int64    `json:"license"`
+		License      string   `json:"license"`
 		Media        string   `json:"media"`
 		Orgformat    string   `json:"originalformat"`
 		Orgsecret    string   `json:"originalsecret"`
