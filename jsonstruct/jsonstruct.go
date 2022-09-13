@@ -74,7 +74,7 @@ type PhotosGetInfo struct {
 	Photo struct {
 		ID           string   `json:"id"`
 		Dateuploaded string   `json:"dateuploaded"`
-		License      string   `json:"license"`
+		License      int64    `json:"license"`
 		Media        string   `json:"media"`
 		Orgformat    string   `json:"originalformat"`
 		Orgsecret    string   `json:"originalsecret"`
@@ -159,7 +159,7 @@ type PhotoSize struct {
 // License struct
 // easyjson:json
 type License struct {
-	ID   string `json:"id"`
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 	URL  string `json:"url"`
 }

@@ -28,7 +28,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct(in *jlexer.Lex
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -101,7 +101,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct1(in *jlexer.Le
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -195,7 +195,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct2(in *jlexer.Le
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -275,7 +275,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct3(in *jlexer.Le
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -373,7 +373,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct4(in *jlexer.Le
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -389,7 +389,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct4(in *jlexer.Le
 				in.Delim('[')
 				if out.Tag == nil {
 					if !in.IsDelim(']') {
-						out.Tag = make([]tag, 0, 1)
+						out.Tag = make([]tag, 0, 0)
 					} else {
 						out.Tag = []tag{}
 					}
@@ -471,7 +471,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct5(in *jlexer.Le
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -551,7 +551,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct6(in *jlexer.Le
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -638,7 +638,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct7(in *jlexer.Le
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -704,7 +704,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct8(in *jlexer.Le
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -896,7 +896,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct9(in *jlexer.Le
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -930,7 +930,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct9(in *jlexer.Le
 				in.Delim('[')
 				if out.Photo == nil {
 					if !in.IsDelim(']') {
-						out.Photo = make([]Photo, 0, 1)
+						out.Photo = make([]Photo, 0, 0)
 					} else {
 						out.Photo = []Photo{}
 					}
@@ -1057,7 +1057,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct10(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1150,7 +1150,7 @@ func easyjson1c889379Decode(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1180,7 +1180,7 @@ func easyjson1c889379Decode(in *jlexer.Lexer, out *struct {
 				in.Delim('[')
 				if out.Photo == nil {
 					if !in.IsDelim(']') {
-						out.Photo = make([]Photo, 0, 1)
+						out.Photo = make([]Photo, 0, 0)
 					} else {
 						out.Photo = []Photo{}
 					}
@@ -1270,7 +1270,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct11(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1359,7 +1359,7 @@ func easyjson1c889379Decode1(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1435,7 +1435,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct12(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1514,7 +1514,7 @@ func (v *PhotosGetInfo) UnmarshalEasyJSON(l *jlexer.Lexer) {
 func easyjson1c889379Decode2(in *jlexer.Lexer, out *struct {
 	ID           string   `json:"id"`
 	Dateuploaded string   `json:"dateuploaded"`
-	License      string   `json:"license"`
+	License      int64    `json:"license"`
 	Media        string   `json:"media"`
 	Orgformat    string   `json:"originalformat"`
 	Orgsecret    string   `json:"originalsecret"`
@@ -1554,7 +1554,7 @@ func easyjson1c889379Decode2(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1567,7 +1567,7 @@ func easyjson1c889379Decode2(in *jlexer.Lexer, out *struct {
 		case "dateuploaded":
 			out.Dateuploaded = string(in.String())
 		case "license":
-			out.License = string(in.String())
+			out.License = int64(in.Int64())
 		case "media":
 			out.Media = string(in.String())
 		case "originalformat":
@@ -1613,7 +1613,7 @@ func easyjson1c889379Decode2(in *jlexer.Lexer, out *struct {
 func easyjson1c889379Encode2(out *jwriter.Writer, in struct {
 	ID           string   `json:"id"`
 	Dateuploaded string   `json:"dateuploaded"`
-	License      string   `json:"license"`
+	License      int64    `json:"license"`
 	Media        string   `json:"media"`
 	Orgformat    string   `json:"originalformat"`
 	Orgsecret    string   `json:"originalsecret"`
@@ -1659,7 +1659,7 @@ func easyjson1c889379Encode2(out *jwriter.Writer, in struct {
 	{
 		const prefix string = ",\"license\":"
 		out.RawString(prefix)
-		out.String(string(in.License))
+		out.Int64(int64(in.License))
 	}
 	{
 		const prefix string = ",\"media\":"
@@ -1758,7 +1758,7 @@ func easyjson1c889379Decode4(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1826,7 +1826,7 @@ func easyjson1c889379Decode3(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1918,7 +1918,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct13(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1942,7 +1942,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct13(in *jlexer.L
 				in.Delim('[')
 				if out.Photo == nil {
 					if !in.IsDelim(']') {
-						out.Photo = make([]Photo, 0, 1)
+						out.Photo = make([]Photo, 0, 0)
 					} else {
 						out.Photo = []Photo{}
 					}
@@ -2044,7 +2044,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct14(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2116,7 +2116,7 @@ func easyjson1c889379Decode5(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2138,7 +2138,7 @@ func easyjson1c889379Decode5(in *jlexer.Lexer, out *struct {
 				in.Delim('[')
 				if out.Size == nil {
 					if !in.IsDelim(']') {
-						out.Size = make([]PhotoSize, 0, 1)
+						out.Size = make([]PhotoSize, 0, 0)
 					} else {
 						out.Size = []PhotoSize{}
 					}
@@ -2224,7 +2224,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct15(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2325,7 +2325,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct16(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2447,7 +2447,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct17(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2590,7 +2590,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct18(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2665,7 +2665,7 @@ func easyjson1c889379Decode6(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2681,7 +2681,7 @@ func easyjson1c889379Decode6(in *jlexer.Lexer, out *struct {
 				in.Delim('[')
 				if out.Group == nil {
 					if !in.IsDelim(']') {
-						out.Group = make([]PeopleGroup, 0, 1)
+						out.Group = make([]PeopleGroup, 0, 0)
 					} else {
 						out.Group = []PeopleGroup{}
 					}
@@ -2741,7 +2741,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct19(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2834,7 +2834,7 @@ func easyjson1c889379Decode7(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2898,7 +2898,7 @@ func easyjson1c889379Decode8(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2942,7 +2942,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct20(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -3078,7 +3078,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct21(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -3087,7 +3087,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct21(in *jlexer.L
 		}
 		switch key {
 		case "id":
-			out.ID = string(in.String())
+			out.ID = int64(in.Int64())
 		case "name":
 			out.Name = string(in.String())
 		case "url":
@@ -3109,7 +3109,7 @@ func easyjson1c889379EncodeGithubComToomoreLazyflickrgoJsonstruct21(out *jwriter
 	{
 		const prefix string = ",\"id\":"
 		out.RawString(prefix[1:])
-		out.String(string(in.ID))
+		out.Int64(int64(in.ID))
 	}
 	{
 		const prefix string = ",\"name\":"
@@ -3158,7 +3158,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct22(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -3245,7 +3245,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct23(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -3406,7 +3406,7 @@ func easyjson1c889379Decode10(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -3470,7 +3470,7 @@ func easyjson1c889379Decode9(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -3530,7 +3530,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct24(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -3596,7 +3596,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct25(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -3676,7 +3676,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct26(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -3763,7 +3763,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct27(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -3850,7 +3850,7 @@ func easyjson1c889379DecodeGithubComToomoreLazyflickrgoJsonstruct28(in *jlexer.L
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
